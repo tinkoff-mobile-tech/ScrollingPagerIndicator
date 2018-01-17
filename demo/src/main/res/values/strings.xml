@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">ScrollingPagerIndicator</string>
+
+    <string name="label_visible_dot_count">Visible dot count</string>
+    <string name="label_page_count">Page count</string>
+
+</resources>

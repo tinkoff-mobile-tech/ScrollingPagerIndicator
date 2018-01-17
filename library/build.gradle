@@ -1,0 +1,27 @@
+apply plugin: 'com.android.library'
+apply from: '../gradle/publish-lib.gradle'
+
+def customGradleScript = '../gradle/local.gradle'
+if(new File(customGradleScript).exists()){
+    apply from: customGradleScript
+}
+
+android {
+    compileSdkVersion rootProject.compileSdk
+
+    defaultConfig {
+        minSdkVersion rootProject.minSdk
+        targetSdkVersion rootProject.targetSdk
+        versionCode project.properties['VERSION_CODE'].toInteger()
+        versionName project.properties['VERSION_NAME']
+    }
+}
+
+tasks.withType(Javadoc) {
+    options.addStringOption('encoding', 'UTF-8')
+    options.addStringOption('charSet', 'UTF-8')
+}
+
+dependencies {
+    compileOnly "com.android.support:support-core-ui:$rootProject.supportVersion"
+}
