@@ -1,3 +1,5 @@
+[![Maven Central][img version shield]][maven]
+
 ScrollingPagerIndicator
 =======================
 Pager indicator inspired by Instagram. Lightweight and easy to set up.
@@ -75,3 +77,5 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
+[img version shield]: https://img.shields.io/maven-central/v/ru.tinkoff.scrollingpagerindicator/scrollingpagerindicator.svg?maxAge=3600
+[maven]: https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22ru.tinkoff.scrollingpagerindicator%22
