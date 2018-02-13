@@ -4,4 +4,7 @@
     <string name="label_visible_dot_count">Visible dot count</string>
     <string name="label_page_count">Page count</string>
 
+    <string name="title_recycler">RecyclerView</string>
+    <string name="title_pager">ViewPager</string>
+
 </resources>

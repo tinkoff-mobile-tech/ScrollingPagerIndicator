@@ -24,4 +24,5 @@ tasks.withType(Javadoc) {
 
 dependencies {
     compileOnly "com.android.support:support-core-ui:$rootProject.supportVersion"
+    compileOnly "com.android.support:recyclerview-v7:$rootProject.supportVersion"
 }

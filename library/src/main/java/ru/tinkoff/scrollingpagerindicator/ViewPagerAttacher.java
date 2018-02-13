@@ -33,7 +33,7 @@ public class ViewPagerAttacher implements ScrollingPagerIndicator.PagerAttacher<
 
             @Override
             public void onInvalidated() {
-                indicator.reattach();
+                onChanged();
             }
         };
         adapter.registerDataSetObserver(dataSetObserver);

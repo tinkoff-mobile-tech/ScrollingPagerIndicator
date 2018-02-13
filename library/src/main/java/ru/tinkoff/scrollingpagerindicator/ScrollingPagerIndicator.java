@@ -185,7 +185,7 @@ public class ScrollingPagerIndicator extends View {
         attachRunnable = new Runnable() {
             @Override
             public void run() {
-                dotCount = 0;
+                dotCount = -1;
                 attachToPager(pager, attacher);
             }
         };
@@ -213,11 +213,14 @@ public class ScrollingPagerIndicator extends View {
     public void onPageScrolled(int page, float offset) {
         if (offset < 0 || offset > 1) {
             throw new IllegalArgumentException("Offset must be [0, 1]");
-        } else if (page < 0 || page > dotCount) {
-            throw new IndexOutOfBoundsException("page must be [0, adapter.getItemCount()]");
+        } else if (page < 0 || page != 0 && page >= dotCount) {
+            throw new IndexOutOfBoundsException("page must be [0, adapter.getItemCount())");
         }
 
         if (!looped || dotCount <= visibleDotCount && dotCount > 1) {
+            for (int i = 0; i < dotCount; i++) {
+                dotScale[i] = 0;
+            }
             scaleDotByOffset(page, offset);
             if (page < dotCount - 1) {
                 scaleDotByOffset(page + 1, 1 - offset);

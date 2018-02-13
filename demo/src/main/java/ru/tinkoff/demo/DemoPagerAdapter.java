@@ -1,6 +1,5 @@
 package ru.tinkoff.demo;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
@@ -12,11 +11,9 @@ import android.widget.TextView;
  * @author Nikita Olifer
  */
 class DemoPagerAdapter extends PagerAdapter {
-    private final Context context;
     private int pageCount;
 
-    DemoPagerAdapter(Context context, int pageCount) {
-        this.context = context;
+    DemoPagerAdapter(int pageCount) {
         this.pageCount = pageCount;
     }
 
@@ -28,7 +25,8 @@ class DemoPagerAdapter extends PagerAdapter {
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup collection, int position) {
-        ViewGroup layout = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.demo_page, collection, false);
+        ViewGroup layout = (ViewGroup) LayoutInflater.from(collection.getContext())
+                .inflate(R.layout.demo_page, collection, false);
         TextView label = layout.findViewById(R.id.demo_page_label);
         label.setText(String.valueOf(position));
         collection.addView(layout);
