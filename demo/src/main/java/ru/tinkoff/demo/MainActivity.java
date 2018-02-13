@@ -2,7 +2,6 @@ package ru.tinkoff.demo;
 
 import android.content.Context;
 import android.graphics.Point;
-import android.graphics.RectF;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -45,14 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
         ScrollingPagerIndicator recyclerIndicator = findViewById(R.id.recycler_indicator);
         // Consider page in the middle current
-        recyclerIndicator.attachToPager(recyclerView, new RecyclerViewAttacher(
-                new RectF(
-                        screenWidth / 3,
-                        0,
-                        screenWidth * 2 / 3,
-                        getResources().getDimensionPixelSize(R.dimen.pager_height)
-                )
-        ));
+        recyclerIndicator.attachToPager(recyclerView, new RecyclerViewAttacher());
 
         // Some controls
         NumberPicker pageCountPicker = findViewById(R.id.page_number_picker);

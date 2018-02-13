@@ -1,6 +1,5 @@
 package ru.tinkoff.scrollingpagerindicator;
 
-import android.graphics.RectF;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -18,22 +17,41 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
     private RecyclerView.OnScrollListener scrollListener;
     private RecyclerView.AdapterDataObserver dataObserver;
 
-    private RectF currentPageFrame;
+    private final boolean centered;
+    private final int currentPageLeftCorner;
+
+    private int measuredChildWidth;
 
     /**
-     * Default constructor. Current page frame will occupy all recycler view size.
-     * You should use this constructor if each page has the same size as recycler view.
+     * Default constructor. Use this if current page in recycler is centered.
+     * Like this:
+     * +------------------------------+
+     * |---+  +-----------------+ +---|
+     * |   |  |     current     | |   |
+     * |   |  |      page       | |   |
+     * |---+  +-----------------+ +---|
+     * +------------------------------+
      */
     public RecyclerViewAttacher() {
+        currentPageLeftCorner = 0; // Unused when centered
+        centered = true;
     }
 
     /**
-     * Use this constructor if there is more then one page visible in idle state of the recycler view.
-     * @param currentPageFrame the frame in coordinates relative to recycler view.
-     *                         It is used for current page and it's offset calculation.
+     * Use this constructor if current page in recycler isn't centered.
+     * +-|----------------------------+
+     * | +--------+  +--------+  +----+
+     * | | current|  |        |  |    |
+     * | |  page  |  |        |  |    |
+     * | +--------+  +--------+  +----|
+     * +-|----------------------------+
+     *   | currentPageLeftCorner
+     *   |
+     * @param currentPageLeftCornerX x coordinate of current view left corner relative to recycler view.
      */
-    public RecyclerViewAttacher(RectF currentPageFrame) {
-        this.currentPageFrame = currentPageFrame;
+    public RecyclerViewAttacher(int currentPageLeftCornerX) {
+        this.currentPageLeftCorner = currentPageLeftCornerX;
+        this.centered = false;
     }
 
     @Override
@@ -57,15 +75,12 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
         scrollListener = new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    if (isInIdleState()) {
-                        int newPosition = findCompletelyVisiblePosition();
-                        if (newPosition != RecyclerView.NO_POSITION) {
-                            // Notify
-                            indicator.setDotCount(adapter.getItemCount());
-                            if (newPosition >= 0 && newPosition < adapter.getItemCount()) {
-                                indicator.setCurrentPosition(newPosition);
-                            }
+                if (newState == RecyclerView.SCROLL_STATE_IDLE && isInIdleState()) {
+                    int newPosition = findCompletelyVisiblePosition();
+                    if (newPosition != RecyclerView.NO_POSITION) {
+                        indicator.setDotCount(adapter.getItemCount());
+                        if (newPosition >= 0 && newPosition < adapter.getItemCount()) {
+                            indicator.setCurrentPosition(newPosition);
                         }
                     }
                 }
@@ -84,6 +99,7 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
     public void detachFromPager() {
         adapter.unregisterAdapterDataObserver(dataObserver);
         recyclerView.removeOnScrollListener(scrollListener);
+        measuredChildWidth = 0;
     }
 
     private void updateCurrentOffset() {
@@ -97,8 +113,7 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
         }
         int position = holder.getAdapterPosition();
 
-        final float offset = (getCurrentFrameLeft() - leftView.getX())
-                / leftView.getMeasuredWidth();
+        final float offset = (getCurrentFrameLeft() - leftView.getX()) / leftView.getMeasuredWidth();
 
         if (offset >= 0 && offset <= 1 && position != RecyclerView.NO_POSITION && position < adapter.getItemCount()) {
             indicator.onPageScrolled(position, offset);
@@ -153,16 +168,31 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
     }
 
     private float getCurrentFrameLeft() {
-        if (currentPageFrame == null) {
-            currentPageFrame = new RectF(0, 0, recyclerView.getMeasuredWidth(), recyclerView.getMeasuredHeight());
+        if (centered) {
+            return (recyclerView.getMeasuredWidth() - getChildWidth()) / 2;
+        } else {
+            return currentPageLeftCorner;
         }
-        return currentPageFrame.left;
     }
 
     private float getCurrentFrameRight() {
-        if (currentPageFrame == null) {
-            currentPageFrame = new RectF(0, 0, recyclerView.getMeasuredWidth(), recyclerView.getMeasuredHeight());
+        if (centered) {
+            return (recyclerView.getMeasuredWidth() - getChildWidth()) / 2 + getChildWidth();
+        } else {
+            return currentPageLeftCorner + getChildWidth();
         }
-        return currentPageFrame.right;
+    }
+
+    private float getChildWidth() {
+        if (measuredChildWidth == 0) {
+            for (int i = 0; i < recyclerView.getChildCount(); i++) {
+                View child = recyclerView.getChildAt(i);
+                if (child.getMeasuredWidth() != 0) {
+                    measuredChildWidth = child.getMeasuredWidth();
+                    return measuredChildWidth;
+                }
+            }
+        }
+        return measuredChildWidth;
     }
 }
