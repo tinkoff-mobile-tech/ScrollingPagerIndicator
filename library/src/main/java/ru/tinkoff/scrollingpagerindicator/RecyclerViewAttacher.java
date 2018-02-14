@@ -93,7 +93,7 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
                     int newPosition = findCompletelyVisiblePosition();
                     if (newPosition != RecyclerView.NO_POSITION) {
                         indicator.setDotCount(adapter.getItemCount());
-                        if (newPosition >= 0 && newPosition < adapter.getItemCount()) {
+                        if (newPosition < adapter.getItemCount()) {
                             indicator.setCurrentPosition(newPosition);
                         }
                     }
@@ -126,15 +126,16 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
         if (position == RecyclerView.NO_POSITION) {
             return;
         }
+        final int itemCount = adapter.getItemCount();
 
         // In case there is an infinite pager
-        if (position >= adapter.getItemCount()) {
-            position = position % adapter.getItemCount();
+        if (position >= itemCount && itemCount != 0) {
+            position = position % itemCount;
         }
 
         final float offset = (getCurrentFrameLeft() - leftView.getX()) / leftView.getMeasuredWidth();
 
-        if (offset >= 0 && offset <= 1 && position != RecyclerView.NO_POSITION && position < adapter.getItemCount()) {
+        if (offset >= 0 && offset <= 1 && position < itemCount) {
             indicator.onPageScrolled(position, offset);
         }
     }
