@@ -4,7 +4,7 @@ android {
     compileSdkVersion rootProject.compileSdk
 
     defaultConfig {
-        applicationId "ru.tinkoff.scaleddotsindicator"
+        applicationId "ru.tinkoff.scrollingpagerindicator.demo"
         minSdkVersion rootProject.minSdk
         targetSdkVersion rootProject.targetSdk
         versionCode 1

@@ -1,4 +1,4 @@
-package ru.tinkoff.demo;
+package ru.tinkoff.scrollingpagerindicator.demo;
 
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;

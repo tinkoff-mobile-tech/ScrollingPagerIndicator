@@ -1,4 +1,4 @@
-package ru.tinkoff.demo;
+package ru.tinkoff.scrollingpagerindicator.demo;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;

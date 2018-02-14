@@ -1,4 +1,4 @@
-package ru.tinkoff.demo;
+package ru.tinkoff.scrollingpagerindicator.demo;
 
 import android.content.Context;
 import android.graphics.Point;
@@ -12,7 +12,6 @@ import android.view.WindowManager;
 import android.widget.NumberPicker;
 import android.widget.Toast;
 
-import ru.tinkoff.scrollingpagerindicator.RecyclerViewAttacher;
 import ru.tinkoff.scrollingpagerindicator.ScrollingPagerIndicator;
 
 public class MainActivity extends AppCompatActivity {
