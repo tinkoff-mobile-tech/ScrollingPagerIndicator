@@ -6,6 +6,7 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.support.annotation.ColorInt;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
@@ -164,7 +165,7 @@ public class ScrollingPagerIndicator extends View {
      *
      * @param pager pager to attach
      */
-    public void attachToPager(ViewPager pager) {
+    public void attachToPager(@NonNull ViewPager pager) {
         attachToPager(pager, new ViewPagerAttacher());
     }
 
@@ -182,7 +183,7 @@ public class ScrollingPagerIndicator extends View {
      *
      * @param recyclerView recycler view to attach
      */
-    public void attachToRecyclerView(RecyclerView recyclerView) {
+    public void attachToRecyclerView(@NonNull RecyclerView recyclerView) {
         attachToPager(recyclerView, new RecyclerViewAttacher());
     }
 
@@ -203,7 +204,7 @@ public class ScrollingPagerIndicator extends View {
      * @param recyclerView recycler view to attach
      * @param currentPageLeftCornerX x coordinate of current view left corner relative to recycler view
      */
-    public void attachToRecyclerView(RecyclerView recyclerView, int currentPageLeftCornerX) {
+    public void attachToRecyclerView(@NonNull RecyclerView recyclerView, int currentPageLeftCornerX) {
         attachToPager(recyclerView, new RecyclerViewAttacher(currentPageLeftCornerX));
     }
 
@@ -213,7 +214,7 @@ public class ScrollingPagerIndicator extends View {
      * @param pager    pager to attach
      * @param attacher helper which should setup this indicator to work with custom pager
      */
-    public <T> void attachToPager(final T pager, final PagerAttacher<T> attacher) {
+    public <T> void attachToPager(@NonNull final T pager, @NonNull final PagerAttacher<T> attacher) {
         if (currentAttacher != null) {
             currentAttacher.detachFromPager();
             currentAttacher = null;
@@ -502,7 +503,7 @@ public class ScrollingPagerIndicator extends View {
          * @param indicator indicator
          * @param pager pager to attach
          */
-        void attachToPager(ScrollingPagerIndicator indicator, T pager);
+        void attachToPager(@NonNull ScrollingPagerIndicator indicator, @NonNull T pager);
 
         /**
          * Here you should unregister all callbacks previously added to pager and adapter

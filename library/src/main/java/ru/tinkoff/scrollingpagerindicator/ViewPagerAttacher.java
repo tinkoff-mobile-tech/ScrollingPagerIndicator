@@ -1,6 +1,7 @@
 package ru.tinkoff.scrollingpagerindicator;
 
 import android.database.DataSetObserver;
+import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 
@@ -14,7 +15,7 @@ public class ViewPagerAttacher implements ScrollingPagerIndicator.PagerAttacher<
     private ViewPager pager;
 
     @Override
-    public void attachToPager(final ScrollingPagerIndicator indicator, final ViewPager pager) {
+    public void attachToPager(@NonNull final ScrollingPagerIndicator indicator, @NonNull final ViewPager pager) {
         final PagerAdapter adapter = pager.getAdapter();
         if (adapter == null) {
             throw new IllegalStateException("Set adapter before call attachToPager() method");

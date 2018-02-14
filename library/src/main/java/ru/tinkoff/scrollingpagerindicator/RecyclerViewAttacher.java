@@ -1,5 +1,6 @@
 package ru.tinkoff.scrollingpagerindicator;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -62,7 +63,7 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
     }
 
     @Override
-    public void attachToPager(final ScrollingPagerIndicator indicator, final RecyclerView pager) {
+    public void attachToPager(@NonNull final ScrollingPagerIndicator indicator, @NonNull final RecyclerView pager) {
         if (!(pager.getLayoutManager() instanceof LinearLayoutManager)) {
             throw new IllegalStateException("Only LinearLayoutManager is supported");
         }
