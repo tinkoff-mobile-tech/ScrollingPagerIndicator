@@ -6,10 +6,14 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.support.annotation.ColorInt;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
+
+import java.util.Arrays;
 
 /**
  * @author Nikita Olifer
@@ -161,8 +165,47 @@ public class ScrollingPagerIndicator extends View {
      *
      * @param pager pager to attach
      */
-    public void attachToPager(ViewPager pager) {
+    public void attachToPager(@NonNull ViewPager pager) {
         attachToPager(pager, new ViewPagerAttacher());
+    }
+
+    /**
+     * Attaches indicator to RecyclerView. Use this method if current page of the recycler is centered.
+     * All pages must have the same width.
+     * Like this:
+     *
+     * +------------------------------+
+     * |---+  +----------------+  +---|
+     * |   |  |     current    |  |   |
+     * |   |  |      page      |  |   |
+     * |---+  +----------------+  +---|
+     * +------------------------------+
+     *
+     * @param recyclerView recycler view to attach
+     */
+    public void attachToRecyclerView(@NonNull RecyclerView recyclerView) {
+        attachToPager(recyclerView, new RecyclerViewAttacher());
+    }
+
+    /**
+     * Attaches indicator to RecyclerView. Use this method if current page of the recycler isn't centered.
+     * All pages must have the same width.
+     * Like this:
+     *
+     * +-|----------------------------+
+     * | +--------+  +--------+  +----|
+     * | | current|  |        |  |    |
+     * | |  page  |  |        |  |    |
+     * | +--------+  +--------+  +----|
+     * +-|----------------------------+
+     *   | currentPageLeftCorner
+     *   |
+     *
+     * @param recyclerView recycler view to attach
+     * @param currentPageLeftCornerX x coordinate of current view left corner relative to recycler view
+     */
+    public void attachToRecyclerView(@NonNull RecyclerView recyclerView, int currentPageLeftCornerX) {
+        attachToPager(recyclerView, new RecyclerViewAttacher(currentPageLeftCornerX));
     }
 
     /**
@@ -171,7 +214,7 @@ public class ScrollingPagerIndicator extends View {
      * @param pager    pager to attach
      * @param attacher helper which should setup this indicator to work with custom pager
      */
-    public <T> void attachToPager(final T pager, final PagerAttacher<T> attacher) {
+    public <T> void attachToPager(@NonNull final T pager, @NonNull final PagerAttacher<T> attacher) {
         if (currentAttacher != null) {
             currentAttacher.detachFromPager();
             currentAttacher = null;
@@ -185,7 +228,7 @@ public class ScrollingPagerIndicator extends View {
         attachRunnable = new Runnable() {
             @Override
             public void run() {
-                dotCount = 0;
+                dotCount = -1;
                 attachToPager(pager, attacher);
             }
         };
@@ -213,11 +256,13 @@ public class ScrollingPagerIndicator extends View {
     public void onPageScrolled(int page, float offset) {
         if (offset < 0 || offset > 1) {
             throw new IllegalArgumentException("Offset must be [0, 1]");
-        } else if (page < 0 || page > dotCount) {
-            throw new IndexOutOfBoundsException("page must be [0, adapter.getItemCount()]");
+        } else if (page < 0 || page != 0 && page >= dotCount) {
+            throw new IndexOutOfBoundsException("page must be [0, adapter.getItemCount())");
         }
 
         if (!looped || dotCount <= visibleDotCount && dotCount > 1) {
+            Arrays.fill(dotScale, 0);
+
             scaleDotByOffset(page, offset);
             if (page < dotCount - 1) {
                 scaleDotByOffset(page + 1, 1 - offset);
@@ -458,7 +503,7 @@ public class ScrollingPagerIndicator extends View {
          * @param indicator indicator
          * @param pager pager to attach
          */
-        void attachToPager(ScrollingPagerIndicator indicator, T pager);
+        void attachToPager(@NonNull ScrollingPagerIndicator indicator, @NonNull T pager);
 
         /**
          * Here you should unregister all callbacks previously added to pager and adapter
