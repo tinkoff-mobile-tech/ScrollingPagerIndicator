@@ -29,7 +29,6 @@ public class DemoRecyclerViewAdapter extends RecyclerView.Adapter<DemoRecyclerVi
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.demo_page, parent, false);
         view.getLayoutParams().width = screenWidth / 3;
-        view.requestLayout();
         return new ViewHolder(view);
     }
 

@@ -57,6 +57,7 @@
         android:id="@+id/recycler"
         android:layout_width="match_parent"
         android:layout_height="@dimen/pager_height"
+        android:clipToPadding="false"
         app:layout_constraintTop_toBottomOf="@id/recycler_indicator" />
 
     <TextView

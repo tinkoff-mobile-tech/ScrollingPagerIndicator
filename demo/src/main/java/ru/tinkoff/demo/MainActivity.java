@@ -40,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(recyclerAdapter);
 
         recyclerView.setPadding(screenWidth / 3, 0, screenWidth / 3, 0);
-        recyclerView.setClipToPadding(false);
 
         ScrollingPagerIndicator recyclerIndicator = findViewById(R.id.recycler_indicator);
         // Consider page in the middle current

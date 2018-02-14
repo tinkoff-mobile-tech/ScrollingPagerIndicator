@@ -12,6 +12,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 
+import java.util.Arrays;
+
 /**
  * @author Nikita Olifer
  */
@@ -258,9 +260,8 @@ public class ScrollingPagerIndicator extends View {
         }
 
         if (!looped || dotCount <= visibleDotCount && dotCount > 1) {
-            for (int i = 0; i < dotCount; i++) {
-                dotScale[i] = 0;
-            }
+            Arrays.fill(dotScale, 0);
+
             scaleDotByOffset(page, offset);
             if (page < dotCount - 1) {
                 scaleDotByOffset(page + 1, 1 - offset);

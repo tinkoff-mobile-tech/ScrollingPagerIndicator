@@ -1,11 +1,13 @@
 package ru.tinkoff.scrollingpagerindicator;
 
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 /**
  * @author Nikita Olifer
+ * Attacher for RecyclerView. Supports only LinearLayoutManager with HORIZONTAL orientation.
  */
 public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttacher<RecyclerView> {
 
@@ -18,7 +20,7 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
     private RecyclerView.AdapterDataObserver dataObserver;
 
     private final boolean centered;
-    private final int currentPageLeftCorner;
+    private final int currentPageLeftCornerX;
 
     private int measuredChildWidth;
 
@@ -35,7 +37,7 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
      * +------------------------------+
      */
     public RecyclerViewAttacher() {
-        currentPageLeftCorner = 0; // Unused when centered
+        currentPageLeftCornerX = 0; // Unused when centered
         centered = true;
     }
 
@@ -50,20 +52,26 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
      * | |  page  |  |        |  |    |
      * | +--------+  +--------+  +----|
      * +-|----------------------------+
-     *   | currentPageLeftCorner
+     *   | currentPageLeftCornerX
      *   |
      * @param currentPageLeftCornerX x coordinate of current view left corner relative to recycler view.
      */
     public RecyclerViewAttacher(int currentPageLeftCornerX) {
-        this.currentPageLeftCorner = currentPageLeftCornerX;
+        this.currentPageLeftCornerX = currentPageLeftCornerX;
         this.centered = false;
     }
 
     @Override
     public void attachToPager(final ScrollingPagerIndicator indicator, final RecyclerView pager) {
+        if (!(pager.getLayoutManager() instanceof LinearLayoutManager)) {
+            throw new IllegalStateException("Only LinearLayoutManager is supported");
+        }
+        this.layoutManager = (LinearLayoutManager) pager.getLayoutManager();
+        if (layoutManager.getOrientation() != LinearLayoutManager.HORIZONTAL) {
+            throw new IllegalStateException("Only HORIZONTAL orientation is supported");
+        }
         this.recyclerView = pager;
         this.adapter = pager.getAdapter();
-        this.layoutManager = (LinearLayoutManager) pager.getLayoutManager();
         this.indicator = indicator;
 
         dataObserver = new RecyclerView.AdapterDataObserver() {
@@ -147,6 +155,7 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
         return findCompletelyVisiblePosition() != RecyclerView.NO_POSITION;
     }
 
+    @Nullable
     private View findFirstVisibleView() {
         int childCount = layoutManager.getChildCount();
         if (childCount == 0) {
@@ -154,7 +163,7 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
         }
 
         View closestChild = null;
-        int startest = Integer.MAX_VALUE;
+        int firstVisibleChildX = Integer.MAX_VALUE;
 
         for (int i = 0; i < childCount; i++) {
             final View child = layoutManager.getChildAt(i);
@@ -167,9 +176,9 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
             // Default implementation change:
             // Fix for any count of visible items
             // We make assumption that all children have the same width
-            if (childStart + child.getMeasuredWidth() < startest
+            if (childStart + child.getMeasuredWidth() < firstVisibleChildX
                     && childStart + child.getMeasuredWidth() > getCurrentFrameLeft()) {
-                startest = childStart;
+                firstVisibleChildX = childStart;
                 closestChild = child;
             }
         }
@@ -181,7 +190,7 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
         if (centered) {
             return (recyclerView.getMeasuredWidth() - getChildWidth()) / 2;
         } else {
-            return currentPageLeftCorner;
+            return currentPageLeftCornerX;
         }
     }
 
@@ -189,7 +198,7 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
         if (centered) {
             return (recyclerView.getMeasuredWidth() - getChildWidth()) / 2 + getChildWidth();
         } else {
-            return currentPageLeftCorner + getChildWidth();
+            return currentPageLeftCornerX + getChildWidth();
         }
     }
 

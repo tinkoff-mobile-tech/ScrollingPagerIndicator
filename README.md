@@ -90,9 +90,9 @@ Use ```attachToRecyclerView(RecyclerView recyclerView, int currentPageLeftCorner
 | +--------+  +--------+  +----|
 +-|----------------------------+
   |
-  | currentPageLeftCorner
+  | currentPageLeftCornerX
 ```
-In both cases all views in RecyclerView must have the same width.
+In both cases all views in RecyclerView must have the same width. Only ```LinearLayoutManager``` with HORIZONTAL orientation is supported.
 ## Attach to any custom pager
 If you want to attach indicator to some custom pager, you have to implement ```ScrollingPagerIndicator.PagerAttacher``` interface.
 You can take look at ```ru.tinkoff.scrollingpagerindicator.ViewPagerAttacher``` as implementation example.
