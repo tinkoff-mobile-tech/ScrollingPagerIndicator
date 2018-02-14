@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -163,6 +164,45 @@ public class ScrollingPagerIndicator extends View {
      */
     public void attachToPager(ViewPager pager) {
         attachToPager(pager, new ViewPagerAttacher());
+    }
+
+    /**
+     * Attaches indicator to RecyclerView. Use this method if current page of the recycler is centered.
+     * All pages must have the same width.
+     * Like this:
+     *
+     * +------------------------------+
+     * |---+  +----------------+  +---|
+     * |   |  |     current    |  |   |
+     * |   |  |      page      |  |   |
+     * |---+  +----------------+  +---|
+     * +------------------------------+
+     *
+     * @param recyclerView recycler view to attach
+     */
+    public void attachToRecyclerView(RecyclerView recyclerView) {
+        attachToPager(recyclerView, new RecyclerViewAttacher());
+    }
+
+    /**
+     * Attaches indicator to RecyclerView. Use this method if current page of the recycler isn't centered.
+     * All pages must have the same width.
+     * Like this:
+     *
+     * +-|----------------------------+
+     * | +--------+  +--------+  +----|
+     * | | current|  |        |  |    |
+     * | |  page  |  |        |  |    |
+     * | +--------+  +--------+  +----|
+     * +-|----------------------------+
+     *   | currentPageLeftCorner
+     *   |
+     *
+     * @param recyclerView recycler view to attach
+     * @param currentPageLeftCornerX x coordinate of current view left corner relative to recycler view
+     */
+    public void attachToRecyclerView(RecyclerView recyclerView, int currentPageLeftCornerX) {
+        attachToPager(recyclerView, new RecyclerViewAttacher(currentPageLeftCornerX));
     }
 
     /**

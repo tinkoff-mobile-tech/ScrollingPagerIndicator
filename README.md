@@ -34,7 +34,7 @@ implementation "com.android.support:appcompat-v7:x.x.x"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" />
 ```
-3. Attach indicator to pager:
+3. Attach indicator to ViewPager:
 ```java
 ViewPager pager = findViewById(R.id.pager);
 pager.setAdapter(new DemoPagerAdapter());
@@ -58,7 +58,7 @@ implementation "com.android.support:recyclerview-v7:x.x.x"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" />
 ```
-3. Attach indicator to recycler:
+3. Attach indicator to RecyclerView:
 ```java
 RecyclerView recyclerView = findViewById(R.id.recycler);
 LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -67,11 +67,33 @@ DemoRecyclerViewAdapter recyclerAdapter = new DemoRecyclerViewAdapter();
 recyclerView.setAdapter(recyclerAdapter);
 
 ScrollingPagerIndicator recyclerIndicator = findViewById(R.id.indicator);
-recyclerIndicator.attachToPager(recyclerView, new RecyclerViewAttacher());
+recyclerIndicator.attachToRecyclerView(recyclerView);
 ```
-There is the simplest case: each view occupies entire RecyclerView's frame (like a pager).
-You can look at demo project for a more advanced example.
-## Attach to custom pager
+4. Determine which page is current in RecyclerView:
+
+Use ```attachToRecyclerView(RecyclerView)``` if current page of the recycler is centered.
+Like this:
+```
++------------------------------+
+|---+  +----------------+  +---|
+|   |  |     current    |  |   |
+|   |  |      page      |  |   |
+|---+  +----------------+  +---|
++------------------------------+
+```
+Use ```attachToRecyclerView(RecyclerView recyclerView, int currentPageLeftCornerX)``` if current page of the recycler isn't centered. Like this:
+```
++-|----------------------------+
+| +--------+  +--------+  +----+
+| | current|  |        |  |    |
+| |  page  |  |        |  |    |
+| +--------+  +--------+  +----|
++-|----------------------------+
+  |
+  | currentPageLeftCorner
+```
+In both cases all views in RecyclerView must have the same width.
+## Attach to any custom pager
 If you want to attach indicator to some custom pager, you have to implement ```ScrollingPagerIndicator.PagerAttacher``` interface.
 You can take look at ```ru.tinkoff.scrollingpagerindicator.ViewPagerAttacher``` as implementation example.
 And then you can attach your pager like this:

@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
         ScrollingPagerIndicator recyclerIndicator = findViewById(R.id.recycler_indicator);
         // Consider page in the middle current
-        recyclerIndicator.attachToPager(recyclerView, new RecyclerViewAttacher());
+        recyclerIndicator.attachToRecyclerView(recyclerView);
 
         // Some controls
         NumberPicker pageCountPicker = findViewById(R.id.page_number_picker);

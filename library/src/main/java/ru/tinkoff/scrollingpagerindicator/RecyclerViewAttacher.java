@@ -24,12 +24,14 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
 
     /**
      * Default constructor. Use this if current page in recycler is centered.
+     * All pages must have the same width.
      * Like this:
+     *
      * +------------------------------+
-     * |---+  +-----------------+ +---|
-     * |   |  |     current     | |   |
-     * |   |  |      page       | |   |
-     * |---+  +-----------------+ +---|
+     * |---+  +----------------+  +---|
+     * |   |  |     current    |  |   |
+     * |   |  |      page      |  |   |
+     * |---+  +----------------+  +---|
      * +------------------------------+
      */
     public RecyclerViewAttacher() {
@@ -39,8 +41,11 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
 
     /**
      * Use this constructor if current page in recycler isn't centered.
+     * All pages must have the same width.
+     * Like this:
+     *
      * +-|----------------------------+
-     * | +--------+  +--------+  +----+
+     * | +--------+  +--------+  +----|
      * | | current|  |        |  |    |
      * | |  page  |  |        |  |    |
      * | +--------+  +--------+  +----|
@@ -107,11 +112,16 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
         if (leftView == null) {
             return;
         }
-        RecyclerView.ViewHolder holder = recyclerView.findContainingViewHolder(leftView);
-        if (holder == null) {
+
+        int position = recyclerView.getChildAdapterPosition(leftView);
+        if (position == RecyclerView.NO_POSITION) {
             return;
         }
-        int position = holder.getAdapterPosition();
+
+        // In case there is an infinite pager
+        if (position >= adapter.getItemCount()) {
+            position = position % adapter.getItemCount();
+        }
 
         final float offset = (getCurrentFrameLeft() - leftView.getX()) / leftView.getMeasuredWidth();
 
