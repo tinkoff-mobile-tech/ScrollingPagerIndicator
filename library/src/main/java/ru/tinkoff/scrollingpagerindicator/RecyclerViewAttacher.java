@@ -81,6 +81,31 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
                 indicator.setDotCount(adapter.getItemCount());
                 updateCurrentOffset();
             }
+
+            @Override
+            public void onItemRangeChanged(int positionStart, int itemCount) {
+                onChanged();
+            }
+
+            @Override
+            public void onItemRangeChanged(int positionStart, int itemCount, Object payload) {
+                onChanged();
+            }
+
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                onChanged();
+            }
+
+            @Override
+            public void onItemRangeRemoved(int positionStart, int itemCount) {
+                onChanged();
+            }
+
+            @Override
+            public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount) {
+                onChanged();
+            }
         };
         adapter.registerAdapterDataObserver(dataObserver);
         indicator.setDotCount(adapter.getItemCount());
