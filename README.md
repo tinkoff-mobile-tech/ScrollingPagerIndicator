@@ -34,6 +34,8 @@ implementation "com.android.support:appcompat-v7:x.x.x"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" />
 ```
+There is no possibility to set fixed indicator width (because it's width is based on ```spi_visibleDotCount```).
+
 3. Attach indicator to ViewPager:
 ```java
 ViewPager pager = findViewById(R.id.pager);

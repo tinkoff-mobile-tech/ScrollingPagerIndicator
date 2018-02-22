@@ -303,13 +303,11 @@ public class ScrollingPagerIndicator extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         // Width
-        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-        if (widthMode == MeasureSpec.EXACTLY) {
-            throw new IllegalStateException("Fixed width is not supported");
-        }
         int measuredWidth;
+        // We ignore widthMeasureSpec because width is based on visibleDotCount
         if (isInEditMode()) {
-            measuredWidth = MeasureSpec.getSize(widthMeasureSpec);
+            // Maximum width with all dots visible
+            measuredWidth = (visibleDotCount - 1) * spaceBetweenDotCenters + dotSelectedSize;
         } else {
             measuredWidth = dotCount >= visibleDotCount
                     ? (int) visibleFrameWidth
