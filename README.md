@@ -29,7 +29,7 @@ implementation "com.android.support:appcompat-v7:x.x.x"
     android:layout_width="match_parent"
     android:layout_height="wrap_content" />
 
-<ru.tinkoff.library.ScrollingPagerIndicator
+<ru.tinkoff.scrollingpagerindicator.ScrollingPagerIndicator
     android:id="@+id/indicator"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" />
@@ -55,7 +55,7 @@ implementation "com.android.support:recyclerview-v7:x.x.x"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"/>
 
-<ru.tinkoff.library.ScrollingPagerIndicator
+<ru.tinkoff.scrollingpagerindicator.ScrollingPagerIndicator
     android:id="@+id/indicator"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" />
