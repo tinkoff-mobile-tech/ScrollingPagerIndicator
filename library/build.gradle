@@ -12,8 +12,10 @@ android {
     defaultConfig {
         minSdkVersion rootProject.minSdk
         targetSdkVersion rootProject.targetSdk
-        versionCode project.properties['VERSION_CODE'].toInteger()
-        versionName project.properties['VERSION_NAME']
+    }
+
+    libraryVariants.all {
+        it.generateBuildConfig.enabled = false
     }
 }
 
