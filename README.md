@@ -111,6 +111,7 @@ indicator.attachToPager(pager, new ViewPagerAttacher());
 | spi_dotSelectedColor| The color of the currently selected dot.| ```@android:color/darker_gray```  |
 | spi_dotSpacing      | The distance from center to center of each dot. | ```8dp```       |
 | spi_visibleDotCount | The maximum number of dots which will be visible at the same time. If pager has more pages than visible_dot_count, indicator will scroll to show extra dots. Must be odd number.  | ```5```          |
+| spi_visibleDotThreshold | The minimum number of dots which should be visible. If pager has less pages than visibleDotThreshold, no dots will be shown.  | ```2```          |
 | spi_looped | The mode for looped pagers support. You should make indicator looped if your custom pager is looped too. If pager has less items than ```spi_visibleDotCount```, indicator will work as usual; otherwise it will always be in infinite state. | ```false```|
 
 ## TODO
