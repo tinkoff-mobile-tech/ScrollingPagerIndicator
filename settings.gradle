@@ -1,1 +1,3 @@
 include ':demo', ':library'
+project(':library').name = "scrollingpagerindicator"
+
