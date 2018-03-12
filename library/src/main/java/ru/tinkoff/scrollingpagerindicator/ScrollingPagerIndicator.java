@@ -269,7 +269,7 @@ public class ScrollingPagerIndicator extends View {
             if (page < dotCount - 1) {
                 scaleDotByOffset(page + 1, 1 - offset);
             } else {
-                scaleDotByOffset(0, 1 - offset);
+                scaleDotByOffset(0, offset);
             }
             invalidate();
         }
