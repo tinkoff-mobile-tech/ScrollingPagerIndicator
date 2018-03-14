@@ -391,7 +391,7 @@ public class ScrollingPagerIndicator extends View {
                     }
                 }
 
-                paint.setColor(calculateColor(diameter));
+                paint.setColor(calculateDotColor(scale));
                 canvas.drawCircle(dot - visibleFramePosition,
                         getMeasuredHeight() / 2,
                         diameter / 2,
@@ -401,12 +401,8 @@ public class ScrollingPagerIndicator extends View {
     }
 
     @ColorInt
-    private int calculateColor(float dotSize) {
-        if (dotSize <= dotNormalSize) {
-            return dotColor;
-        }
-        float fraction = (dotSize - dotNormalSize) / (dotSelectedSize - dotNormalSize);
-        return (Integer) colorEvaluator.evaluate(fraction, dotColor, selectedDotColor);
+    private int calculateDotColor(float dotScale) {
+        return (Integer) colorEvaluator.evaluate(dotScale, dotColor, selectedDotColor);
     }
 
     private void updateScaleInIdleState(int currentPos) {
