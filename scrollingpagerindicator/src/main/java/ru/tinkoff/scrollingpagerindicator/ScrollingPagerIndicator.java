@@ -217,13 +217,7 @@ public class ScrollingPagerIndicator extends View {
      * @param attacher helper which should setup this indicator to work with custom pager
      */
     public <T> void attachToPager(@NonNull final T pager, @NonNull final PagerAttacher<T> attacher) {
-        if (currentAttacher != null) {
-            currentAttacher.detachFromPager();
-            currentAttacher = null;
-            attachRunnable = null;
-        }
-        dotCountInitialized = false;
-
+        detachFromPager();
         attacher.attachToPager(this, pager);
         currentAttacher = attacher;
 
@@ -234,6 +228,18 @@ public class ScrollingPagerIndicator extends View {
                 attachToPager(pager, attacher);
             }
         };
+    }
+
+    /**
+     * Detaches indicator from pager.
+     */
+    public void detachFromPager() {
+        if (currentAttacher != null) {
+            currentAttacher.detachFromPager();
+            currentAttacher = null;
+            attachRunnable = null;
+        }
+        dotCountInitialized = false;
     }
 
     /**
@@ -395,7 +401,7 @@ public class ScrollingPagerIndicator extends View {
                     }
                 }
 
-                paint.setColor(calculateColor(diameter));
+                paint.setColor(calculateDotColor(scale));
                 canvas.drawCircle(dot - visibleFramePosition,
                         getMeasuredHeight() / 2,
                         diameter / 2,
@@ -405,12 +411,8 @@ public class ScrollingPagerIndicator extends View {
     }
 
     @ColorInt
-    private int calculateColor(float dotSize) {
-        if (dotSize <= dotNormalSize) {
-            return dotColor;
-        }
-        float fraction = (dotSize - dotNormalSize) / (dotSelectedSize - dotNormalSize);
-        return (Integer) colorEvaluator.evaluate(fraction, dotColor, selectedDotColor);
+    private int calculateDotColor(float dotScale) {
+        return (Integer) colorEvaluator.evaluate(dotScale, dotColor, selectedDotColor);
     }
 
     private void updateScaleInIdleState(int currentPos) {
