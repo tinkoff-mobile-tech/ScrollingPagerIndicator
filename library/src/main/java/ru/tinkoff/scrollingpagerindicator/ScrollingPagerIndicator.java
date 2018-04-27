@@ -215,13 +215,7 @@ public class ScrollingPagerIndicator extends View {
      * @param attacher helper which should setup this indicator to work with custom pager
      */
     public <T> void attachToPager(@NonNull final T pager, @NonNull final PagerAttacher<T> attacher) {
-        if (currentAttacher != null) {
-            currentAttacher.detachFromPager();
-            currentAttacher = null;
-            attachRunnable = null;
-        }
-        dotCountInitialized = false;
-
+        detachFromPager();
         attacher.attachToPager(this, pager);
         currentAttacher = attacher;
 
@@ -232,6 +226,18 @@ public class ScrollingPagerIndicator extends View {
                 attachToPager(pager, attacher);
             }
         };
+    }
+
+    /**
+     * Detaches indicator from pager.
+     */
+    public void detachFromPager() {
+        if (currentAttacher != null) {
+            currentAttacher.detachFromPager();
+            currentAttacher = null;
+            attachRunnable = null;
+        }
+        dotCountInitialized = false;
     }
 
     /**
