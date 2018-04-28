@@ -26,6 +26,7 @@ public class ScrollingPagerIndicator extends View {
     private final int dotSelectedSize;
     private final int spaceBetweenDotCenters;
     private int visibleDotCount;
+    private int visibleDotThreshold;
 
     private float visibleFramePosition;
     private float visibleFrameWidth;
@@ -72,6 +73,7 @@ public class ScrollingPagerIndicator extends View {
         looped = attributes.getBoolean(R.styleable.ScrollingPagerIndicator_spi_looped, false);
         int visibleDotCount = attributes.getInt(R.styleable.ScrollingPagerIndicator_spi_visibleDotCount, 0);
         setVisibleDotCount(visibleDotCount);
+        visibleDotThreshold = attributes.getInt(R.styleable.ScrollingPagerIndicator_spi_visibleDotThreshold, 2);
         attributes.recycle();
 
         paint = new Paint();
@@ -270,11 +272,13 @@ public class ScrollingPagerIndicator extends View {
             Arrays.fill(dotScale, 0);
 
             scaleDotByOffset(page, offset);
+
             if (page < dotCount - 1) {
                 scaleDotByOffset(page + 1, 1 - offset);
-            } else {
+            } else if (dotCount > 1) {
                 scaleDotByOffset(0, 1 - offset);
             }
+
             invalidate();
         }
         adjustFramePosition(offset, page);
@@ -344,7 +348,7 @@ public class ScrollingPagerIndicator extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (dotOffset == null || dotOffset.length <= 1) {
+        if (dotOffset == null || dotOffset.length < visibleDotThreshold) {
             return;
         }
 
@@ -430,7 +434,7 @@ public class ScrollingPagerIndicator extends View {
         dotOffset = new float[getDotCount()];
         dotScale = new float[dotOffset.length];
 
-        if (count == 1) {
+        if (count < visibleDotThreshold) {
             return;
         }
 

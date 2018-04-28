@@ -7,6 +7,7 @@
         <attr name="spi_dotSelectedSize" format="dimension" />
         <attr name="spi_dotSpacing" format="dimension" />
         <attr name="spi_visibleDotCount" format="integer" />
+        <attr name="spi_visibleDotThreshold" format="integer" />
         <attr name="spi_looped" format="boolean" />
     </declare-styleable>
 </resources>
