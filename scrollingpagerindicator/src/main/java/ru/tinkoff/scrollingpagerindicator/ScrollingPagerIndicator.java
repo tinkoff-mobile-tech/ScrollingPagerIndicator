@@ -163,6 +163,31 @@ public class ScrollingPagerIndicator extends View {
     }
 
     /**
+     * The minimum number of dots which should be visible.
+     * If pager has less pages than visibleDotThreshold, no dots will be shown.
+     *
+     * @return visible dot threshold.
+     */
+    public int getVisibleDotThreshold() {
+        return visibleDotThreshold;
+    }
+
+    /**
+     * Sets the minimum number of dots which should be visible.
+     * If pager has less pages than visibleDotThreshold, no dots will be shown.
+     *
+     * @param visibleDotThreshold visible dot threshold.
+     */
+    public void setVisibleDotThreshold(int visibleDotThreshold) {
+        this.visibleDotThreshold = visibleDotThreshold;
+        if (attachRunnable != null) {
+            reattach();
+        } else {
+            requestLayout();
+        }
+    }
+
+    /**
      * Attaches indicator to ViewPager
      *
      * @param pager pager to attach
@@ -435,6 +460,8 @@ public class ScrollingPagerIndicator extends View {
         dotScale = new float[dotOffset.length];
 
         if (count < visibleDotThreshold) {
+            requestLayout();
+            invalidate();
             return;
         }
 
@@ -492,6 +519,7 @@ public class ScrollingPagerIndicator extends View {
 
     /**
      * Interface for attaching to custom pagers.
+     *
      * @param <T> custom pager's class
      */
     public interface PagerAttacher<T> {
