@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <style name="ScrollingPagerIndicator">
         <item name="spi_dotColor">@android:color/darker_gray</item>
         <item name="spi_dotSelectedColor">@android:color/darker_gray</item>

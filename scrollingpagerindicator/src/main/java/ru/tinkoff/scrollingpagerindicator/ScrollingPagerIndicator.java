@@ -57,14 +57,14 @@ public class ScrollingPagerIndicator extends View {
     }
 
     public ScrollingPagerIndicator(Context context, @Nullable AttributeSet attrs) {
-        this(context, attrs, R.style.ScrollingPagerIndicator);
+        this(context, attrs, 0);
     }
 
     public ScrollingPagerIndicator(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
         TypedArray attributes = context.obtainStyledAttributes(
-                attrs, R.styleable.ScrollingPagerIndicator, 0, R.style.ScrollingPagerIndicator);
+                attrs, R.styleable.ScrollingPagerIndicator, defStyleAttr, R.style.ScrollingPagerIndicator);
         dotColor = attributes.getColor(R.styleable.ScrollingPagerIndicator_spi_dotColor, 0);
         selectedDotColor = attributes.getColor(R.styleable.ScrollingPagerIndicator_spi_dotSelectedColor, dotColor);
         dotNormalSize = attributes.getDimensionPixelSize(R.styleable.ScrollingPagerIndicator_spi_dotSize, 0);
@@ -78,6 +78,11 @@ public class ScrollingPagerIndicator extends View {
 
         paint = new Paint();
         paint.setAntiAlias(true);
+
+        if (isInEditMode()) {
+            setDotCount(visibleDotCount);
+            onPageScrolled(visibleDotCount / 2, 0);
+        }
     }
 
     /**
