@@ -13,17 +13,18 @@ public class ViewPagerAttacher implements ScrollingPagerIndicator.PagerAttacher<
     private DataSetObserver dataSetObserver;
     private ViewPager.OnPageChangeListener onPageChangeListener;
     private ViewPager pager;
+    private PagerAdapter attachedAdapter;
 
     @Override
     public void attachToPager(@NonNull final ScrollingPagerIndicator indicator, @NonNull final ViewPager pager) {
-        final PagerAdapter adapter = pager.getAdapter();
-        if (adapter == null) {
+        attachedAdapter = pager.getAdapter();
+        if (attachedAdapter == null) {
             throw new IllegalStateException("Set adapter before call attachToPager() method");
         }
 
         this.pager = pager;
 
-        indicator.setDotCount(adapter.getCount());
+        indicator.setDotCount(attachedAdapter.getCount());
         indicator.setCurrentPosition(pager.getCurrentItem());
 
         dataSetObserver = new DataSetObserver() {
@@ -37,7 +38,7 @@ public class ViewPagerAttacher implements ScrollingPagerIndicator.PagerAttacher<
                 onChanged();
             }
         };
-        adapter.registerDataSetObserver(dataSetObserver);
+        attachedAdapter.registerDataSetObserver(dataSetObserver);
 
         onPageChangeListener = new ViewPager.OnPageChangeListener() {
 
@@ -60,7 +61,7 @@ public class ViewPagerAttacher implements ScrollingPagerIndicator.PagerAttacher<
             @Override
             public void onPageSelected(int position) {
                 if (idleState) {
-                    indicator.setDotCount(adapter.getCount());
+                    indicator.setDotCount(attachedAdapter.getCount());
                     indicator.setCurrentPosition(pager.getCurrentItem());
                 }
             }
@@ -75,10 +76,7 @@ public class ViewPagerAttacher implements ScrollingPagerIndicator.PagerAttacher<
 
     @Override
     public void detachFromPager() {
-        PagerAdapter adapter = pager.getAdapter();
-        if (adapter != null) {
-            adapter.unregisterDataSetObserver(dataSetObserver);
-        }
+        attachedAdapter.unregisterDataSetObserver(dataSetObserver);
         pager.removeOnPageChangeListener(onPageChangeListener);
     }
 }

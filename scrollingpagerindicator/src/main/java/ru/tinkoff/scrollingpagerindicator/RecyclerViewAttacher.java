@@ -15,7 +15,7 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
     private ScrollingPagerIndicator indicator;
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
-    private RecyclerView.Adapter<?> adapter;
+    private RecyclerView.Adapter<?> attachedAdapter;
 
     private RecyclerView.OnScrollListener scrollListener;
     private RecyclerView.AdapterDataObserver dataObserver;
@@ -72,13 +72,13 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
             throw new IllegalStateException("Only HORIZONTAL orientation is supported");
         }
         this.recyclerView = pager;
-        this.adapter = pager.getAdapter();
+        this.attachedAdapter = pager.getAdapter();
         this.indicator = indicator;
 
         dataObserver = new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
-                indicator.setDotCount(adapter.getItemCount());
+                indicator.setDotCount(attachedAdapter.getItemCount());
                 updateCurrentOffset();
             }
 
@@ -107,8 +107,8 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
                 onChanged();
             }
         };
-        adapter.registerAdapterDataObserver(dataObserver);
-        indicator.setDotCount(adapter.getItemCount());
+        attachedAdapter.registerAdapterDataObserver(dataObserver);
+        indicator.setDotCount(attachedAdapter.getItemCount());
         updateCurrentOffset();
 
         scrollListener = new RecyclerView.OnScrollListener() {
@@ -117,8 +117,8 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
                 if (newState == RecyclerView.SCROLL_STATE_IDLE && isInIdleState()) {
                     int newPosition = findCompletelyVisiblePosition();
                     if (newPosition != RecyclerView.NO_POSITION) {
-                        indicator.setDotCount(adapter.getItemCount());
-                        if (newPosition < adapter.getItemCount()) {
+                        indicator.setDotCount(attachedAdapter.getItemCount());
+                        if (newPosition < attachedAdapter.getItemCount()) {
                             indicator.setCurrentPosition(newPosition);
                         }
                     }
@@ -136,7 +136,7 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
 
     @Override
     public void detachFromPager() {
-        adapter.unregisterAdapterDataObserver(dataObserver);
+        attachedAdapter.unregisterAdapterDataObserver(dataObserver);
         recyclerView.removeOnScrollListener(scrollListener);
         measuredChildWidth = 0;
     }
@@ -151,7 +151,7 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
         if (position == RecyclerView.NO_POSITION) {
             return;
         }
-        final int itemCount = adapter.getItemCount();
+        final int itemCount = attachedAdapter.getItemCount();
 
         // In case there is an infinite pager
         if (position >= itemCount && itemCount != 0) {
