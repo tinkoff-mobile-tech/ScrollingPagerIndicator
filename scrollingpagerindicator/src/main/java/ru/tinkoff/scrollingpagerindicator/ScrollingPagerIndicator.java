@@ -377,7 +377,8 @@ public class ScrollingPagerIndicator extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (getDotCount() < visibleDotThreshold) {
+        int dotCount = getDotCount();
+        if (dotCount < visibleDotThreshold) {
             return;
         }
 
@@ -390,6 +391,12 @@ public class ScrollingPagerIndicator extends View {
         int lastVisibleDotPos = firstVisibleDotPos
                 + (int) (visibleFramePosition + visibleFrameWidth - getDotOffsetAt(firstVisibleDotPos))
                 / spaceBetweenDotCenters;
+
+        // If real dots count is less than we can draw inside visible frame, we move lastVisibleDotPos
+        // to the last item
+        if (firstVisibleDotPos == 0 && lastVisibleDotPos + 1 > dotCount) {
+            lastVisibleDotPos = dotCount - 1;
+        }
 
         for (int i = firstVisibleDotPos; i <= lastVisibleDotPos; i++) {
             float dot = getDotOffsetAt(i);
@@ -417,7 +424,7 @@ public class ScrollingPagerIndicator extends View {
                 // Additional scale for dots at corners
                 if (itemCount > visibleDotCount) {
                     float currentScaleDistance;
-                    if (!looped && (i == 0 || i == getDotCount() - 1)) {
+                    if (!looped && (i == 0 || i == dotCount - 1)) {
                         currentScaleDistance = smallScaleDistance;
                     } else {
                         currentScaleDistance = scaleDistance;
