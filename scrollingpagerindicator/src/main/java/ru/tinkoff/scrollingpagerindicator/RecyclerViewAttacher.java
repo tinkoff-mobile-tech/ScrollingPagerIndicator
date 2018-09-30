@@ -62,10 +62,10 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
     }
 
     /**
-     * @see {@link #RecyclerViewAttacher(int currentPageLeftCornerX)}
      * @param currentPageLeftCornerX x coordinate of current view left corner relative to recycler view.
-     * @param adapterDelegate is a delegate which is an abstraction under RecyclerView's Adapter
-     * which helps you to use interact with Adapter in some tricky way
+     * @param adapterDelegate        is a delegate which is an abstraction under RecyclerView's Adapter
+     *                               which helps you to use interact with Adapter in some tricky way
+     * @see {@link #RecyclerViewAttacher(int currentPageLeftCornerX)}
      */
     public RecyclerViewAttacher(int currentPageLeftCornerX, RecyclerViewAdapterDelegate adapterDelegate) {
         this.currentPageLeftCornerX = currentPageLeftCornerX;
@@ -74,16 +74,15 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
     }
 
     /**
-     * @see {@link #RecyclerViewAttacher()} default constructor for more info
      * @param adapterDelegate is a delegate which is an abstraction under RecyclerView's Adapter
-     * which helps you to use interact with Adapter in some tricky way
+     *                        which helps you to use interact with Adapter in some tricky way
+     * @see {@link #RecyclerViewAttacher()} default constructor for more info
      */
     public RecyclerViewAttacher(RecyclerViewAdapterDelegate adapterDelegate) {
         currentPageLeftCornerX = 0; // Unused when centered
         centered = true;
         this.adapterDelegate = adapterDelegate;
     }
-
 
 
     @Override
@@ -167,6 +166,9 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
         adapterDelegate.unregisterAdapterDataObserver(dataObserver);
         recyclerView.removeOnScrollListener(scrollListener);
         measuredChildWidth = 0;
+        if (adapterDelegate instanceof DefaultRecyclerViewAdapterDelegate) {
+            adapterDelegate = null;
+        }
     }
 
     private void updateCurrentOffset() {
