@@ -165,9 +165,11 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
         adapterDelegate.unregisterAdapterDataObserver(dataObserver);
         recyclerView.removeOnScrollListener(scrollListener);
         measuredChildWidth = 0;
-        if (adapterDelegate instanceof DefaultRecyclerViewAdapterDelegate) {
-            adapterDelegate = null;
-        }
+        adapterDelegate = null;
+    }
+
+    public void setAdapterDelegate(RecyclerViewAdapterDelegate adapterDelegate) {
+        this.adapterDelegate = adapterDelegate;
     }
 
     private void updateCurrentOffset() {
