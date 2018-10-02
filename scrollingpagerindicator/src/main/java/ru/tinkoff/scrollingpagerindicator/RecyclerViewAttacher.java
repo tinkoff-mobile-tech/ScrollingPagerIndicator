@@ -29,7 +29,7 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
      * Default constructor. Use this if current page in recycler is centered.
      * All pages must have the same width.
      * Like this:
-     * <p>
+     *
      * +------------------------------+
      * |---+  +----------------+  +---|
      * |   |  |     current    |  |   |
@@ -45,15 +45,15 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
      * Use this constructor if current page in recycler isn't centered.
      * All pages must have the same width.
      * Like this:
-     * <p>
+     *
      * +-|----------------------------+
      * | +--------+  +--------+  +----|
      * | | current|  |        |  |    |
      * | |  page  |  |        |  |    |
      * | +--------+  +--------+  +----|
      * +-|----------------------------+
-     * | currentPageLeftCornerX
-     * |
+     *   | currentPageLeftCornerX
+     *   |
      *
      * @param currentPageLeftCornerX x coordinate of current view left corner relative to recycler view.
      */
@@ -65,7 +65,7 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
      * @param currentPageLeftCornerX x coordinate of current view left corner relative to recycler view.
      * @param adapterDelegate        is a delegate which is an abstraction under RecyclerView's Adapter
      *                               which helps you to use interact with Adapter in some tricky way
-     * @see {@link #RecyclerViewAttacher(int currentPageLeftCornerX)}
+     * @see #RecyclerViewAttacher(int currentPageLeftCornerX)
      */
     public RecyclerViewAttacher(int currentPageLeftCornerX, RecyclerViewAdapterDelegate adapterDelegate) {
         this.currentPageLeftCornerX = currentPageLeftCornerX;
@@ -76,14 +76,13 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
     /**
      * @param adapterDelegate is a delegate which is an abstraction under RecyclerView's Adapter
      *                        which helps you to use interact with Adapter in some tricky way
-     * @see {@link #RecyclerViewAttacher()} default constructor for more info
+     * @see #RecyclerViewAttacher() default constructor for more info
      */
     public RecyclerViewAttacher(RecyclerViewAdapterDelegate adapterDelegate) {
-        currentPageLeftCornerX = 0; // Unused when centered
-        centered = true;
+        this.currentPageLeftCornerX = 0; // Unused when centered
+        this.centered = true;
         this.adapterDelegate = adapterDelegate;
     }
-
 
     @Override
     public void attachToPager(@NonNull final ScrollingPagerIndicator indicator, @NonNull final RecyclerView pager) {

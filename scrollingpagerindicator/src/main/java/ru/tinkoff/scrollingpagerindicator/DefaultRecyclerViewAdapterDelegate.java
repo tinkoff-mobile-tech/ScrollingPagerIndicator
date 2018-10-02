@@ -4,7 +4,7 @@ import android.support.v7.widget.RecyclerView;
 
 public class DefaultRecyclerViewAdapterDelegate implements RecyclerViewAdapterDelegate {
 
-    private RecyclerView.Adapter adapter;
+    private final RecyclerView.Adapter adapter;
 
     public DefaultRecyclerViewAdapterDelegate(RecyclerView.Adapter adapter) {
         this.adapter = adapter;
