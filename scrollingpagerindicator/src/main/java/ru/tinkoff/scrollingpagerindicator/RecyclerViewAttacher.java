@@ -15,10 +15,10 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
     private ScrollingPagerIndicator indicator;
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
-    private RecyclerView.Adapter<?> attachedAdapter;
 
     private RecyclerView.OnScrollListener scrollListener;
     private RecyclerView.AdapterDataObserver dataObserver;
+    private RecyclerViewAdapterDelegate adapterDelegate;
 
     private final boolean centered;
     private final int currentPageLeftCornerX;
@@ -38,8 +38,7 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
      * +------------------------------+
      */
     public RecyclerViewAttacher() {
-        currentPageLeftCornerX = 0; // Unused when centered
-        centered = true;
+        this(null);
     }
 
     /**
@@ -55,11 +54,34 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
      * +-|----------------------------+
      *   | currentPageLeftCornerX
      *   |
+     *
      * @param currentPageLeftCornerX x coordinate of current view left corner relative to recycler view.
      */
     public RecyclerViewAttacher(int currentPageLeftCornerX) {
+        this(currentPageLeftCornerX, null);
+    }
+
+    /**
+     * @param currentPageLeftCornerX x coordinate of current view left corner relative to recycler view.
+     * @param adapterDelegate        is a delegate which is an abstraction under RecyclerView's Adapter
+     *                               which helps you to use interact with Adapter in some tricky way
+     * @see #RecyclerViewAttacher(int currentPageLeftCornerX)
+     */
+    public RecyclerViewAttacher(int currentPageLeftCornerX, RecyclerViewAdapterDelegate adapterDelegate) {
         this.currentPageLeftCornerX = currentPageLeftCornerX;
         this.centered = false;
+        this.adapterDelegate = adapterDelegate;
+    }
+
+    /**
+     * @param adapterDelegate is a delegate which is an abstraction under RecyclerView's Adapter
+     *                        which helps you to use interact with Adapter in some tricky way
+     * @see #RecyclerViewAttacher() default constructor for more info
+     */
+    public RecyclerViewAttacher(RecyclerViewAdapterDelegate adapterDelegate) {
+        this.currentPageLeftCornerX = 0; // Unused when centered
+        this.centered = true;
+        this.adapterDelegate = adapterDelegate;
     }
 
     @Override
@@ -71,14 +93,18 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
         if (layoutManager.getOrientation() != LinearLayoutManager.HORIZONTAL) {
             throw new IllegalStateException("Only HORIZONTAL orientation is supported");
         }
+
+        if (adapterDelegate == null) {
+            adapterDelegate = new DefaultRecyclerViewAdapterDelegate(pager.getAdapter());
+        }
+
         this.recyclerView = pager;
-        this.attachedAdapter = pager.getAdapter();
         this.indicator = indicator;
 
         dataObserver = new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
-                indicator.setDotCount(attachedAdapter.getItemCount());
+                indicator.setDotCount(adapterDelegate.getAdapterItemCount());
                 updateCurrentOffset();
             }
 
@@ -107,8 +133,8 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
                 onChanged();
             }
         };
-        attachedAdapter.registerAdapterDataObserver(dataObserver);
-        indicator.setDotCount(attachedAdapter.getItemCount());
+        adapterDelegate.registerAdapterDataObserver(dataObserver);
+        indicator.setDotCount(adapterDelegate.getAdapterItemCount());
         updateCurrentOffset();
 
         scrollListener = new RecyclerView.OnScrollListener() {
@@ -117,8 +143,8 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
                 if (newState == RecyclerView.SCROLL_STATE_IDLE && isInIdleState()) {
                     int newPosition = findCompletelyVisiblePosition();
                     if (newPosition != RecyclerView.NO_POSITION) {
-                        indicator.setDotCount(attachedAdapter.getItemCount());
-                        if (newPosition < attachedAdapter.getItemCount()) {
+                        indicator.setDotCount(adapterDelegate.getAdapterItemCount());
+                        if (newPosition < adapterDelegate.getAdapterItemCount()) {
                             indicator.setCurrentPosition(newPosition);
                         }
                     }
@@ -136,9 +162,14 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
 
     @Override
     public void detachFromPager() {
-        attachedAdapter.unregisterAdapterDataObserver(dataObserver);
+        adapterDelegate.unregisterAdapterDataObserver(dataObserver);
         recyclerView.removeOnScrollListener(scrollListener);
         measuredChildWidth = 0;
+        adapterDelegate = null;
+    }
+
+    public void setAdapterDelegate(RecyclerViewAdapterDelegate adapterDelegate) {
+        this.adapterDelegate = adapterDelegate;
     }
 
     private void updateCurrentOffset() {
@@ -151,7 +182,7 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
         if (position == RecyclerView.NO_POSITION) {
             return;
         }
-        final int itemCount = attachedAdapter.getItemCount();
+        final int itemCount = adapterDelegate.getAdapterItemCount();
 
         // In case there is an infinite pager
         if (position >= itemCount && itemCount != 0) {
