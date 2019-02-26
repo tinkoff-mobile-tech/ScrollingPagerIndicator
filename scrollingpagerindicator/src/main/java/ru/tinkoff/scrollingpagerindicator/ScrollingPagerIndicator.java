@@ -12,12 +12,11 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.SparseArray;
-import android.view.View;
 
 /**
  * @author Nikita Olifer
  */
-public class ScrollingPagerIndicator extends View {
+public class ScrollingPagerIndicator extends IndicatorView {
 
     private int infiniteDotCount;
 
@@ -239,57 +238,20 @@ public class ScrollingPagerIndicator extends View {
         attachToPager(recyclerView, new RecyclerViewAttacher(currentPageLeftCornerX));
     }
 
-    /**
-     * Attaches to any custom pager
-     *
-     * @param pager    pager to attach
-     * @param attacher helper which should setup this indicator to work with custom pager
-     */
-    public <T> void attachToPager(@NonNull final T pager, @NonNull final PagerAttacher<T> attacher) {
-        detachFromPager();
-        attacher.attachToPager(this, pager);
-        currentAttacher = attacher;
-
-        attachRunnable = new Runnable() {
-            @Override
-            public void run() {
-                itemCount = -1;
-                attachToPager(pager, attacher);
-            }
-        };
-    }
-
-    /**
-     * Detaches indicator from pager.
-     */
+    @Override
     public void detachFromPager() {
-        if (currentAttacher != null) {
-            currentAttacher.detachFromPager();
-            currentAttacher = null;
-            attachRunnable = null;
-        }
+        super.detachFromPager();
+
         dotCountInitialized = false;
     }
 
-    /**
-     * Detaches indicator from pager and attaches it again.
-     * It may be useful for refreshing after adapter count change.
-     */
+    @Override
     public void reattach() {
-        if (attachRunnable != null) {
-            attachRunnable.run();
-            invalidate();
-        }
+        itemCount = -1;
+        super.reattach();
     }
 
-    /**
-     * This method must be called from ViewPager.OnPageChangeListener.onPageScrolled or from some
-     * similar callback if you use custom PagerAttacher.
-     *
-     * @param page   index of the first page currently being displayed
-     *               Page position+1 will be visible if offset is nonzero
-     * @param offset Value from [0, 1) indicating the offset from the page at position
-     */
+    @Override
     public void onPageScrolled(int page, float offset) {
         if (offset < 0 || offset > 1) {
             throw new IllegalArgumentException("Offset must be [0, 1]");
@@ -314,20 +276,12 @@ public class ScrollingPagerIndicator extends View {
         invalidate();
     }
 
-    /**
-     * Sets dot count
-     *
-     * @param count new dot count
-     */
+    @Override
     public void setDotCount(int count) {
         initDots(count);
     }
 
-    /**
-     * Sets currently selected position (according to your pager's adapter)
-     *
-     * @param position new current position
-     */
+    @Override
     public void setCurrentPosition(int position) {
         if (position != 0 && (position < 0 || position >= itemCount)) {
             throw new IndexOutOfBoundsException("Position must be [0, adapter.getItemCount()]");
@@ -545,29 +499,4 @@ public class ScrollingPagerIndicator extends View {
         }
     }
 
-    /**
-     * Interface for attaching to custom pagers.
-     *
-     * @param <T> custom pager's class
-     */
-    public interface PagerAttacher<T> {
-
-        /**
-         * Here you should add all needed callbacks to track pager's item count, position and offset
-         * You must call:
-         * {@link ScrollingPagerIndicator#setDotCount(int)} - initially and after page selection,
-         * {@link ScrollingPagerIndicator#setCurrentPosition(int)} - initially and after page selection,
-         * {@link ScrollingPagerIndicator#onPageScrolled(int, float)} - in your pager callback to track scroll offset,
-         * {@link ScrollingPagerIndicator#reattach()} - each time your adapter items change.
-         *
-         * @param indicator indicator
-         * @param pager pager to attach
-         */
-        void attachToPager(@NonNull ScrollingPagerIndicator indicator, @NonNull T pager);
-
-        /**
-         * Here you should unregister all callbacks previously added to pager and adapter
-         */
-        void detachFromPager();
-    }
 }

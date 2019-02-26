@@ -8,7 +8,7 @@ import android.support.v4.view.ViewPager;
 /**
  * @author Nikita Olifer
  */
-public class ViewPagerAttacher implements ScrollingPagerIndicator.PagerAttacher<ViewPager> {
+public class ViewPagerAttacher implements PagerAttacher<ViewPager> {
 
     private DataSetObserver dataSetObserver;
     private ViewPager.OnPageChangeListener onPageChangeListener;
@@ -16,7 +16,7 @@ public class ViewPagerAttacher implements ScrollingPagerIndicator.PagerAttacher<
     private PagerAdapter attachedAdapter;
 
     @Override
-    public void attachToPager(@NonNull final ScrollingPagerIndicator indicator, @NonNull final ViewPager pager) {
+    public void attachToPager(@NonNull final IndicatorView indicator, @NonNull final ViewPager pager) {
         attachedAdapter = pager.getAdapter();
         if (attachedAdapter == null) {
             throw new IllegalStateException("Set adapter before call attachToPager() method");

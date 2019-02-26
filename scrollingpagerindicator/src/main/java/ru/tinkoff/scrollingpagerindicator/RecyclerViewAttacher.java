@@ -10,9 +10,9 @@ import android.view.View;
  * @author Nikita Olifer
  * Attacher for RecyclerView. Supports only LinearLayoutManager with HORIZONTAL orientation.
  */
-public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttacher<RecyclerView> {
+public class RecyclerViewAttacher implements PagerAttacher<RecyclerView> {
 
-    private ScrollingPagerIndicator indicator;
+    private IndicatorView indicator;
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
     private RecyclerView.Adapter<?> attachedAdapter;
@@ -63,7 +63,7 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
     }
 
     @Override
-    public void attachToPager(@NonNull final ScrollingPagerIndicator indicator, @NonNull final RecyclerView pager) {
+    public void attachToPager(@NonNull final IndicatorView indicator, @NonNull final RecyclerView pager) {
         if (!(pager.getLayoutManager() instanceof LinearLayoutManager)) {
             throw new IllegalStateException("Only LinearLayoutManager is supported");
         }
