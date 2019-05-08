@@ -21,6 +21,7 @@ public class ScrollingPagerIndicator extends View {
 
     private int infiniteDotCount;
 
+    private final int dotMinimumSize;
     private final int dotNormalSize;
     private final int dotSelectedSize;
     private final int spaceBetweenDotCenters;
@@ -68,6 +69,9 @@ public class ScrollingPagerIndicator extends View {
         selectedDotColor = attributes.getColor(R.styleable.ScrollingPagerIndicator_spi_dotSelectedColor, dotColor);
         dotNormalSize = attributes.getDimensionPixelSize(R.styleable.ScrollingPagerIndicator_spi_dotSize, 0);
         dotSelectedSize = attributes.getDimensionPixelSize(R.styleable.ScrollingPagerIndicator_spi_dotSelectedSize, 0);
+        int dotMinimumSize = attributes.getDimensionPixelSize(R.styleable.ScrollingPagerIndicator_spi_dotMinimumSize, -1);
+        this.dotMinimumSize = dotMinimumSize <= dotNormalSize ? dotMinimumSize : -1;
+
         spaceBetweenDotCenters = attributes.getDimensionPixelSize(R.styleable.ScrollingPagerIndicator_spi_dotSpacing, 0) + dotNormalSize;
         looped = attributes.getBoolean(R.styleable.ScrollingPagerIndicator_spi_looped, false);
         int visibleDotCount = attributes.getInt(R.styleable.ScrollingPagerIndicator_spi_visibleDotCount, 0);
@@ -432,12 +436,16 @@ public class ScrollingPagerIndicator extends View {
 
                     if (dot - visibleFramePosition < currentScaleDistance) {
                         float calculatedDiameter = diameter * (dot - visibleFramePosition) / currentScaleDistance;
-                        if (calculatedDiameter < diameter) {
+                        if (calculatedDiameter <= dotMinimumSize) {
+                            diameter = dotMinimumSize;
+                        } else if (calculatedDiameter < diameter) {
                             diameter = calculatedDiameter;
                         }
                     } else if (dot - visibleFramePosition > canvas.getWidth() - currentScaleDistance) {
                         float calculatedDiameter = diameter * (-dot + visibleFramePosition + canvas.getWidth()) / currentScaleDistance;
-                        if (calculatedDiameter < diameter) {
+                        if (calculatedDiameter <= dotMinimumSize) {
+                            diameter = dotMinimumSize;
+                        } else if (calculatedDiameter < diameter) {
                             diameter = calculatedDiameter;
                         }
                     }
