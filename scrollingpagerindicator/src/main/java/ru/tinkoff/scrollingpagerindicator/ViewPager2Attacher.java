@@ -1,22 +1,18 @@
 package ru.tinkoff.scrollingpagerindicator;
 
-import android.database.DataSetObserver;
 import androidx.annotation.NonNull;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
-/**
- * @author Nikita Olifer
- */
-public class ViewPagerAttacher extends AbstractViewPagerAttacher<ViewPager> {
+public class ViewPager2Attacher extends AbstractViewPagerAttacher<ViewPager2> {
 
-    private DataSetObserver dataSetObserver;
-    private ViewPager.OnPageChangeListener onPageChangeListener;
-    private ViewPager pager;
-    private PagerAdapter attachedAdapter;
+    private RecyclerView.AdapterDataObserver dataSetObserver;
+    private RecyclerView.Adapter attachedAdapter;
+    private ViewPager2.OnPageChangeCallback onPageChangeListener;
+    private ViewPager2 pager;
 
     @Override
-    public void attachToPager(@NonNull final ScrollingPagerIndicator indicator, @NonNull final ViewPager pager) {
+    public void attachToPager(@NonNull final ScrollingPagerIndicator indicator, @NonNull final ViewPager2 pager) {
         attachedAdapter = pager.getAdapter();
         if (attachedAdapter == null) {
             throw new IllegalStateException("Set adapter before call attachToPager() method");
@@ -26,20 +22,15 @@ public class ViewPagerAttacher extends AbstractViewPagerAttacher<ViewPager> {
 
         updateIndicatorDotsAndPosition(indicator);
 
-        dataSetObserver = new DataSetObserver() {
+        dataSetObserver = new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
                 indicator.reattach();
             }
-
-            @Override
-            public void onInvalidated() {
-                onChanged();
-            }
         };
-        attachedAdapter.registerDataSetObserver(dataSetObserver);
+        attachedAdapter.registerAdapterDataObserver(dataSetObserver);
 
-        onPageChangeListener = new ViewPager.OnPageChangeListener() {
+        onPageChangeListener = new ViewPager2.OnPageChangeCallback() {
 
             boolean idleState = true;
 
@@ -57,20 +48,21 @@ public class ViewPagerAttacher extends AbstractViewPagerAttacher<ViewPager> {
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                idleState = state == ViewPager.SCROLL_STATE_IDLE;
+                idleState = state == ViewPager2.SCROLL_STATE_IDLE;
             }
         };
-        pager.addOnPageChangeListener(onPageChangeListener);
+
+        pager.registerOnPageChangeCallback(onPageChangeListener);
     }
 
     @Override
     public void detachFromPager() {
-        attachedAdapter.unregisterDataSetObserver(dataSetObserver);
-        pager.removeOnPageChangeListener(onPageChangeListener);
+        attachedAdapter.unregisterAdapterDataObserver(dataSetObserver);
+        pager.unregisterOnPageChangeCallback(onPageChangeListener);
     }
 
     private void updateIndicatorDotsAndPosition(ScrollingPagerIndicator indicator) {
-        indicator.setDotCount(attachedAdapter.getCount());
+        indicator.setDotCount(attachedAdapter.getItemCount());
         indicator.setCurrentPosition(pager.getCurrentItem());
     }
 }

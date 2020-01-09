@@ -6,5 +6,6 @@
 
     <string name="title_recycler">RecyclerView</string>
     <string name="title_pager">ViewPager</string>
+    <string name="title_pager2">ViewPager2</string>
 
 </resources>

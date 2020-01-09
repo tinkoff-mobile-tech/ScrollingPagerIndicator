@@ -3,14 +3,17 @@ package ru.tinkoff.scrollingpagerindicator.demo;
 import android.content.Context;
 import android.graphics.Point;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.Display;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.NumberPicker;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import ru.tinkoff.scrollingpagerindicator.ScrollingPagerIndicator;
 
@@ -31,11 +34,19 @@ public class MainActivity extends AppCompatActivity {
         ScrollingPagerIndicator pagerIndicator = findViewById(R.id.pager_indicator);
         pagerIndicator.attachToPager(pager);
 
+        // Setup ViewPager2 with indicator
+        ViewPager2 pager2 = findViewById(R.id.pager2);
+        DemoRecyclerViewAdapter pagerAdapter2 = new DemoRecyclerViewAdapter(8, ViewGroup.LayoutParams.MATCH_PARENT);
+        pager2.setAdapter(pagerAdapter2);
+
+        ScrollingPagerIndicator pagerIndicator2 = findViewById(R.id.pager_indicator2);
+        pagerIndicator2.attachToPager(pager2);
+
         // Setup RecyclerView with indicator
         // One page will occupy 1/3 of screen width
         RecyclerView recyclerView = findViewById(R.id.recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        DemoRecyclerViewAdapter recyclerAdapter = new DemoRecyclerViewAdapter(8, screenWidth);
+        DemoRecyclerViewAdapter recyclerAdapter = new DemoRecyclerViewAdapter(8, screenWidth / 3);
         recyclerView.setAdapter(recyclerAdapter);
 
         recyclerView.setPadding(screenWidth / 3, 0, screenWidth / 3, 0);

@@ -5,14 +5,16 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.View;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
 /**
  * @author Nikita Olifer
@@ -198,6 +200,15 @@ public class ScrollingPagerIndicator extends View {
      */
     public void attachToPager(@NonNull ViewPager pager) {
         attachToPager(pager, new ViewPagerAttacher());
+    }
+
+    /**
+     * Attaches indicator to ViewPager2
+     *
+     * @param pager pager to attach
+     */
+    public void attachToPager(@NonNull ViewPager2 pager) {
+        attachToPager(pager, new ViewPager2Attacher());
     }
 
     /**

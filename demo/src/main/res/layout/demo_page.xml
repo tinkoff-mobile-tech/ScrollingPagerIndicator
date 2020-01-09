@@ -7,7 +7,7 @@
     android:clipToPadding="false"
     android:padding="16dp">
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:elevation="6dp"
@@ -22,5 +22,5 @@
             android:textSize="54sp"
             tools:text="1" />
 
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 </FrameLayout>

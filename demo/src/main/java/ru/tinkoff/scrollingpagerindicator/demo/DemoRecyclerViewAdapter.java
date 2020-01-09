@@ -1,10 +1,11 @@
 package ru.tinkoff.scrollingpagerindicator.demo;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * @author Nikita Olifer
@@ -12,11 +13,11 @@ import android.widget.TextView;
 public class DemoRecyclerViewAdapter extends RecyclerView.Adapter<DemoRecyclerViewAdapter.ViewHolder> {
 
     private int count;
-    private final int screenWidth;
+    private final int itemWidth;
 
-    DemoRecyclerViewAdapter(int count, int screenWidth) {
+    DemoRecyclerViewAdapter(int count, int itemWidth) {
         this.count = count;
-        this.screenWidth = screenWidth;
+        this.itemWidth = itemWidth;
     }
 
     void setCount(int count) {
@@ -28,7 +29,7 @@ public class DemoRecyclerViewAdapter extends RecyclerView.Adapter<DemoRecyclerVi
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.demo_page, parent, false);
-        view.getLayoutParams().width = screenWidth / 3;
+        view.getLayoutParams().width = itemWidth;
         return new ViewHolder(view);
     }
 
