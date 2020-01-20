@@ -17,9 +17,11 @@ android {
 }
 
 dependencies {
-    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
-    implementation "com.android.support:appcompat-v7:$rootProject.supportVersion"
-    implementation "com.android.support:cardview-v7:$rootProject.supportVersion"
-    implementation "com.android.support:recyclerview-v7:$rootProject.supportVersion"
+    implementation "androidx.appcompat:appcompat:$rootProject.appCompatVersion"
+    implementation "androidx.constraintlayout:constraintlayout:$rootProject.constraintLayoutVersion"
+    implementation "androidx.viewpager:viewpager:$rootProject.viewPagerVersion"
+    implementation "androidx.viewpager2:viewpager2:$rootProject.viewPager2Version"
+    implementation "androidx.cardview:cardview:$rootProject.cardViewVersion"
+    implementation "androidx.recyclerview:recyclerview:$rootProject.recyclerViewVersion"
     implementation project(':scrollingpagerindicator')
 }
