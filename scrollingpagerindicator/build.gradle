@@ -25,9 +25,7 @@ tasks.withType(Javadoc) {
 }
 
 dependencies {
-    compileOnly "androidx.constraintlayout:constraintlayout:$rootProject.constraintLayoutVersion"
     compileOnly "androidx.viewpager:viewpager:$rootProject.viewPagerVersion"
     compileOnly "androidx.viewpager2:viewpager2:$rootProject.viewPager2Version"
-    compileOnly "androidx.cardview:cardview:$rootProject.cardViewVersion"
     compileOnly "androidx.recyclerview:recyclerview:$rootProject.recyclerViewVersion"
 }
