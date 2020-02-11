@@ -12,6 +12,7 @@ import android.view.View;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager2.widget.ViewPager2;
@@ -29,6 +30,7 @@ public class ScrollingPagerIndicator extends View {
     private final int spaceBetweenDotCenters;
     private int visibleDotCount;
     private int visibleDotThreshold;
+    private int orientation;
 
     private float visibleFramePosition;
     private float visibleFrameWidth;
@@ -79,6 +81,7 @@ public class ScrollingPagerIndicator extends View {
         int visibleDotCount = attributes.getInt(R.styleable.ScrollingPagerIndicator_spi_visibleDotCount, 0);
         setVisibleDotCount(visibleDotCount);
         visibleDotThreshold = attributes.getInt(R.styleable.ScrollingPagerIndicator_spi_visibleDotThreshold, 2);
+        orientation = attributes.getInt(R.styleable.ScrollingPagerIndicator_spi_orientation, 0);
         attributes.recycle();
 
         paint = new Paint();
@@ -198,6 +201,29 @@ public class ScrollingPagerIndicator extends View {
     }
 
     /**
+     * The visible orientation of the dots
+     *
+     * @return dot orientation
+     */
+    public int getOrientation() {
+        return orientation;
+    }
+
+    /**
+     * Set the dot orientation
+     *
+     * @param orientation dot orientation
+     */
+    public void setOrientation(int orientation) {
+        this.orientation = orientation;
+        if (attachRunnable != null) {
+            reattach();
+        } else {
+            requestLayout();
+        }
+    }
+
+    /**
      * Attaches indicator to ViewPager
      *
      * @param pager pager to attach
@@ -244,14 +270,14 @@ public class ScrollingPagerIndicator extends View {
      * | |  page  |  |        |  |    |
      * | +--------+  +--------+  +----|
      * +-|----------------------------+
-     *   | currentPageLeftCorner
+     *   | currentPageOffset
      *   |
      *
      * @param recyclerView recycler view to attach
-     * @param currentPageLeftCornerX x coordinate of current view left corner relative to recycler view
+     * @param currentPageOffset x coordinate of current view left corner/top relative to recycler view
      */
-    public void attachToRecyclerView(@NonNull RecyclerView recyclerView, int currentPageLeftCornerX) {
-        attachToPager(recyclerView, new RecyclerViewAttacher(currentPageLeftCornerX));
+    public void attachToRecyclerView(@NonNull RecyclerView recyclerView, int currentPageOffset) {
+        attachToPager(recyclerView, new RecyclerViewAttacher(currentPageOffset));
     }
 
     /**
@@ -358,35 +384,63 @@ public class ScrollingPagerIndicator extends View {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         // Width
         int measuredWidth;
-        // We ignore widthMeasureSpec because width is based on visibleDotCount
-        if (isInEditMode()) {
-            // Maximum width with all dots visible
-            measuredWidth = (visibleDotCount - 1) * spaceBetweenDotCenters + dotSelectedSize;
-        } else {
-            measuredWidth = itemCount >= visibleDotCount
-                    ? (int) visibleFrameWidth
-                    : (itemCount - 1) * spaceBetweenDotCenters + dotSelectedSize;
-        }
-
-        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-
         // Height
-        int desiredHeight = dotSelectedSize;
         int measuredHeight;
 
-        switch (heightMode) {
-            case MeasureSpec.EXACTLY:
-                measuredHeight = heightSize;
-                break;
-            case MeasureSpec.AT_MOST:
-                measuredHeight = Math.min(desiredHeight, heightSize);
-                break;
-            case MeasureSpec.UNSPECIFIED:
-            default:
-                measuredHeight = desiredHeight;
-        }
+        if (orientation == LinearLayoutManager.HORIZONTAL) {
+            // We ignore widthMeasureSpec because width is based on visibleDotCount
+            if (isInEditMode()) {
+                // Maximum width with all dots visible
+                measuredWidth = (visibleDotCount - 1) * spaceBetweenDotCenters + dotSelectedSize;
+            } else {
+                measuredWidth = itemCount >= visibleDotCount
+                        ? (int) visibleFrameWidth
+                        : (itemCount - 1) * spaceBetweenDotCenters + dotSelectedSize;
+            }
+            int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+            int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
+            // Height
+            int desiredHeight = dotSelectedSize;
+
+            switch (heightMode) {
+                case MeasureSpec.EXACTLY:
+                    measuredHeight = heightSize;
+                    break;
+                case MeasureSpec.AT_MOST:
+                    measuredHeight = Math.min(desiredHeight, heightSize);
+                    break;
+                case MeasureSpec.UNSPECIFIED:
+                default:
+                    measuredHeight = desiredHeight;
+            }
+        } else {
+            if (isInEditMode()) {
+                measuredHeight = (visibleDotCount - 1) * spaceBetweenDotCenters + dotSelectedSize;
+            } else {
+                measuredHeight = itemCount >= visibleDotCount
+                        ? (int) visibleFrameWidth
+                        : (itemCount - 1) * spaceBetweenDotCenters * dotSelectedSize;
+            }
+
+            int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+            int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+
+            // Width
+            int desiredWidth = dotSelectedSize;
+
+            switch (widthMode) {
+                case MeasureSpec.EXACTLY:
+                    measuredWidth = widthSize;
+                    break;
+                case MeasureSpec.AT_MOST:
+                    measuredWidth = Math.min(desiredWidth, widthSize);
+                    break;
+                case MeasureSpec.UNSPECIFIED:
+                default:
+                    measuredWidth = desiredWidth;
+            }
+        }
         setMeasuredDimension(measuredWidth, measuredHeight);
     }
 
@@ -445,6 +499,10 @@ public class ScrollingPagerIndicator extends View {
                         currentScaleDistance = scaleDistance;
                     }
 
+                    int size = getWidth();
+                    if (orientation == LinearLayoutManager.VERTICAL) {
+                        size = getHeight();
+                    }
                     if (dot - visibleFramePosition < currentScaleDistance) {
                         float calculatedDiameter = diameter * (dot - visibleFramePosition) / currentScaleDistance;
                         if (calculatedDiameter <= dotMinimumSize) {
@@ -452,8 +510,8 @@ public class ScrollingPagerIndicator extends View {
                         } else if (calculatedDiameter < diameter) {
                             diameter = calculatedDiameter;
                         }
-                    } else if (dot - visibleFramePosition > canvas.getWidth() - currentScaleDistance) {
-                        float calculatedDiameter = diameter * (-dot + visibleFramePosition + canvas.getWidth()) / currentScaleDistance;
+                    } else if (dot - visibleFramePosition > size - currentScaleDistance) {
+                        float calculatedDiameter = diameter * (-dot + visibleFramePosition + size) / currentScaleDistance;
                         if (calculatedDiameter <= dotMinimumSize) {
                             diameter = dotMinimumSize;
                         } else if (calculatedDiameter < diameter) {
@@ -463,10 +521,17 @@ public class ScrollingPagerIndicator extends View {
                 }
 
                 paint.setColor(calculateDotColor(scale));
-                canvas.drawCircle(dot - visibleFramePosition,
-                        getMeasuredHeight() / 2,
-                        diameter / 2,
-                        paint);
+                if (orientation == LinearLayoutManager.HORIZONTAL) {
+                    canvas.drawCircle(dot - visibleFramePosition,
+                            getMeasuredHeight() / 2,
+                            diameter / 2,
+                            paint);
+                } else {
+                    canvas.drawCircle(getMeasuredWidth() / 2,
+                            dot - visibleFramePosition,
+                            diameter / 2,
+                            paint);
+                }
             }
         }
     }

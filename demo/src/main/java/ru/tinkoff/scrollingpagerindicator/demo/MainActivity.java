@@ -11,7 +11,9 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SnapHelper;
 import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -45,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         // Setup RecyclerView with indicator
         // One page will occupy 1/3 of screen width
         RecyclerView recyclerView = findViewById(R.id.recycler);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         DemoRecyclerViewAdapter recyclerAdapter = new DemoRecyclerViewAdapter(8, screenWidth / 3);
         recyclerView.setAdapter(recyclerAdapter);
 
@@ -54,6 +56,9 @@ public class MainActivity extends AppCompatActivity {
         ScrollingPagerIndicator recyclerIndicator = findViewById(R.id.recycler_indicator);
         // Consider page in the middle current
         recyclerIndicator.attachToRecyclerView(recyclerView);
+
+        SnapHelper snapHelper = new PagerSnapHelper();
+        snapHelper.attachToRecyclerView(recyclerView);
 
         // Some controls
         NumberPicker pageCountPicker = findViewById(R.id.page_number_picker);

@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * @author Nikita Olifer
- * Attacher for RecyclerView. Supports only LinearLayoutManager with HORIZONTAL orientation.
+ * Attacher for RecyclerView.
  */
 public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttacher<RecyclerView> {
 
@@ -22,9 +22,10 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
     private RecyclerView.AdapterDataObserver dataObserver;
 
     private final boolean centered;
-    private final int currentPageLeftCornerX;
+    private final int currentPageOffset;
 
     private int measuredChildWidth;
+    private int measuredChildHeight;
 
     /**
      * Default constructor. Use this if current page in recycler is centered.
@@ -39,7 +40,7 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
      * +------------------------------+
      */
     public RecyclerViewAttacher() {
-        currentPageLeftCornerX = 0; // Unused when centered
+        currentPageOffset = 0; // Unused when centered
         centered = true;
     }
 
@@ -54,12 +55,12 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
      * | |  page  |  |        |  |    |
      * | +--------+  +--------+  +----|
      * +-|----------------------------+
-     *   | currentPageLeftCornerX
+     *   | currentPageOffset
      *   |
-     * @param currentPageLeftCornerX x coordinate of current view left corner relative to recycler view.
+     * @param currentPageoffset x coordinate of current view left corner/top relative to recycler view.
      */
-    public RecyclerViewAttacher(int currentPageLeftCornerX) {
-        this.currentPageLeftCornerX = currentPageLeftCornerX;
+    public RecyclerViewAttacher(int currentPageoffset) {
+        this.currentPageOffset = currentPageoffset;
         this.centered = false;
     }
 
@@ -68,10 +69,10 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
         if (!(pager.getLayoutManager() instanceof LinearLayoutManager)) {
             throw new IllegalStateException("Only LinearLayoutManager is supported");
         }
-        this.layoutManager = (LinearLayoutManager) pager.getLayoutManager();
-        if (layoutManager.getOrientation() != LinearLayoutManager.HORIZONTAL) {
-            throw new IllegalStateException("Only HORIZONTAL orientation is supported");
+        if (pager.getAdapter() == null) {
+            throw new IllegalStateException("RecyclerView has not Adapter attached");
         }
+        this.layoutManager = (LinearLayoutManager) pager.getLayoutManager();
         this.recyclerView = pager;
         this.attachedAdapter = pager.getAdapter();
         this.indicator = indicator;
@@ -114,7 +115,7 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
 
         scrollListener = new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 if (newState == RecyclerView.SCROLL_STATE_IDLE && isInIdleState()) {
                     int newPosition = findCompletelyVisiblePosition();
                     if (newPosition != RecyclerView.NO_POSITION) {
@@ -127,7 +128,7 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
             }
 
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 updateCurrentOffset();
             }
         };
@@ -143,12 +144,12 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
     }
 
     private void updateCurrentOffset() {
-        final View leftView = findFirstVisibleView();
-        if (leftView == null) {
+        final View firstView = findFirstVisibleView();
+        if (firstView == null) {
             return;
         }
 
-        int position = recyclerView.getChildAdapterPosition(leftView);
+        int position = recyclerView.getChildAdapterPosition(firstView);
         if (position == RecyclerView.NO_POSITION) {
             return;
         }
@@ -159,7 +160,12 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
             position = position % itemCount;
         }
 
-        final float offset = (getCurrentFrameLeft() - leftView.getX()) / leftView.getMeasuredWidth();
+        float offset;
+        if (layoutManager.getOrientation() == LinearLayoutManager.HORIZONTAL) {
+            offset = (getCurrentFrameLeft() - firstView.getX()) / firstView.getMeasuredWidth();
+        } else {
+            offset = (getCurrentFrameTop() - firstView.getY()) / firstView.getMeasuredHeight();
+        }
 
         if (offset >= 0 && offset <= 1 && position < itemCount) {
             indicator.onPageScrolled(position, offset);
@@ -169,7 +175,19 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
     private int findCompletelyVisiblePosition() {
         for (int i = 0; i < recyclerView.getChildCount(); i++) {
             View child = recyclerView.getChildAt(i);
-            if (child.getX() >= getCurrentFrameLeft() && child.getX() + child.getMeasuredWidth() <= getCurrentFrameRight()) {
+
+            float position = child.getX();
+            int size = child.getMeasuredWidth();
+            float currentStart = getCurrentFrameLeft();
+            float currentEnd = getCurrentFrameRight();
+            if (layoutManager.getOrientation() == LinearLayoutManager.VERTICAL) {
+                position = child.getY();
+                size = child.getMeasuredHeight();
+                currentStart = getCurrentFrameTop();
+                currentEnd = getCurrentFrameBottom();
+            }
+
+            if (position >= currentStart && position + size <= currentEnd) {
                 RecyclerView.ViewHolder holder = recyclerView.findContainingViewHolder(child);
                 if (holder != null && holder.getAdapterPosition() != RecyclerView.NO_POSITION) {
                     return holder.getAdapterPosition();
@@ -191,23 +209,39 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
         }
 
         View closestChild = null;
-        int firstVisibleChildX = Integer.MAX_VALUE;
+        int firstVisibleChild = Integer.MAX_VALUE;
 
         for (int i = 0; i < childCount; i++) {
             final View child = layoutManager.getChildAt(i);
 
-            // Default implementation change: use getX instead of helper
-            int childStart = (int) child.getX();
+            if (layoutManager.getOrientation() == LinearLayoutManager.HORIZONTAL) {
+                // Default implementation change: use getX instead of helper
+                int childStart = (int) child.getX();
 
-            // if child is more to start than previous closest, set it as closest
+                // if child is more to start than previous closest, set it as closest
 
-            // Default implementation change:
-            // Fix for any count of visible items
-            // We make assumption that all children have the same width
-            if (childStart + child.getMeasuredWidth() < firstVisibleChildX
-                    && childStart + child.getMeasuredWidth() > getCurrentFrameLeft()) {
-                firstVisibleChildX = childStart;
-                closestChild = child;
+                // Default implementation change:
+                // Fix for any count of visible items
+                // We make assumption that all children have the same width
+                if (childStart + child.getMeasuredWidth() < firstVisibleChild
+                        && childStart + child.getMeasuredWidth() >= getCurrentFrameLeft()) {
+                    firstVisibleChild = childStart;
+                    closestChild = child;
+                }
+            } else {
+                // Default implementation change: use geetY instead of helper
+                int childStart = (int) child.getY();
+
+                // if child is more to top than previous closest, set it as closest
+
+                // Default implementation change:
+                // Fix for any count of visible items
+                // We make assumption that all children have the same height
+                if (childStart + child.getMeasuredHeight() < firstVisibleChild
+                        && childStart + child.getMeasuredHeight() >= getCurrentFrameBottom()) {
+                    firstVisibleChild = childStart;
+                    closestChild = child;
+                }
             }
         }
 
@@ -218,7 +252,7 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
         if (centered) {
             return (recyclerView.getMeasuredWidth() - getChildWidth()) / 2;
         } else {
-            return currentPageLeftCornerX;
+            return currentPageOffset;
         }
     }
 
@@ -226,7 +260,23 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
         if (centered) {
             return (recyclerView.getMeasuredWidth() - getChildWidth()) / 2 + getChildWidth();
         } else {
-            return currentPageLeftCornerX + getChildWidth();
+            return currentPageOffset + getChildWidth();
+        }
+    }
+
+    private float getCurrentFrameTop() {
+        if (centered) {
+            return (recyclerView.getMeasuredHeight() - getChildHeight()) / 2;
+        } else {
+            return currentPageOffset;
+        }
+    }
+
+    private float getCurrentFrameBottom() {
+        if (centered) {
+            return (recyclerView.getMeasuredHeight() - getChildHeight()) / 2 + getChildHeight();
+        } else {
+            return currentPageOffset + getChildHeight();
         }
     }
 
@@ -241,5 +291,18 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
             }
         }
         return measuredChildWidth;
+    }
+
+    private float getChildHeight() {
+        if (measuredChildHeight == 0) {
+            for (int i = 0; i < recyclerView.getChildCount(); i++) {
+                View child = recyclerView.getChildAt(i);
+                if (child.getMeasuredHeight() != 0) {
+                    measuredChildHeight = child.getMeasuredHeight();
+                    return measuredChildHeight;
+                }
+            }
+        }
+        return measuredChildHeight;
     }
 }

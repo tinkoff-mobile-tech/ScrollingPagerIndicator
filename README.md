@@ -16,11 +16,15 @@ implementation "ru.tinkoff.scrollingpagerindicator:scrollingpagerindicator:x.x.x
 ## Attach to ViewPager
 1. Ensure that you have ViewPager in dependencies:
 ```
-implementation "com.android.support:support-core-ui:x.x.x"
+implementation "androidx.viewpager:viewpager:x.x.x"
 ```
 or
 ```
-implementation "com.android.support:appcompat-v7:x.x.x"
+implementation "androidx.viewpager2:viewpager2:x.x.x"
+```
+or
+```
+implementation "androidx.recyclerview:recyclerview:x.x.x"
 ```
 2. Add view to layout:
 ```xml
@@ -94,7 +98,7 @@ Use ```attachToRecyclerView(RecyclerView recyclerView, int currentPageLeftCorner
   |
   | currentPageLeftCornerX
 ```
-In both cases all views in RecyclerView must have the same width. Only ```LinearLayoutManager``` with HORIZONTAL orientation is supported.
+In both cases all views in RecyclerView must have the same width. Only ```LinearLayoutManager``` is supported.
 ## Attach to any custom pager
 If you want to attach indicator to some custom pager, you have to implement ```ScrollingPagerIndicator.PagerAttacher``` interface.
 You can take look at ```ru.tinkoff.scrollingpagerindicator.ViewPagerAttacher``` as implementation example.
@@ -114,6 +118,7 @@ indicator.attachToPager(pager, new ViewPagerAttacher());
 | spi_visibleDotThreshold | The minimum number of dots which should be visible. If pager has less pages than visibleDotThreshold, no dots will be shown.  | ```2```          |
 | spi_looped | The mode for looped pagers support. You should make indicator looped if your custom pager is looped too. If pager has less items than ```spi_visibleDotCount```, indicator will work as usual; otherwise it will always be in infinite state. | ```false```|
 | spi_dotMinimumSize | The minimum dot size for the corner dots. This size is lower or equal to ```spi_dotSize``` and greater or equal to the internal calculation for the corner dots. | Internal calculation based on ```spi_dotSize```, ```spi_dotSelectedSize``` and ```spi_dotSpacing``` |
+| spi_orientation | Visible orientation of the dots | LinearLayoutManager.HORIZONTAL |
 
 ## TODO
 1. Some extreme customizations may work incorrect.
