@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
@@ -245,7 +246,7 @@ public class ScrollingPagerIndicator extends View {
      * Attaches indicator to RecyclerView. Use this method if current page of the recycler is centered.
      * All pages must have the same width.
      * Like this:
-     *
+     * <p>
      * +------------------------------+
      * |---+  +----------------+  +---|
      * |   |  |     current    |  |   |
@@ -263,17 +264,17 @@ public class ScrollingPagerIndicator extends View {
      * Attaches indicator to RecyclerView. Use this method if current page of the recycler isn't centered.
      * All pages must have the same width.
      * Like this:
-     *
+     * <p>
      * +-|----------------------------+
      * | +--------+  +--------+  +----|
      * | | current|  |        |  |    |
      * | |  page  |  |        |  |    |
      * | +--------+  +--------+  +----|
      * +-|----------------------------+
-     *   | currentPageOffset
-     *   |
+     * | currentPageOffset
+     * |
      *
-     * @param recyclerView recycler view to attach
+     * @param recyclerView      recycler view to attach
      * @param currentPageOffset x coordinate of current view left corner/top relative to recycler view
      */
     public void attachToRecyclerView(@NonNull RecyclerView recyclerView, int currentPageOffset) {
@@ -341,17 +342,40 @@ public class ScrollingPagerIndicator extends View {
         if (!looped || itemCount <= visibleDotCount && itemCount > 1) {
             dotScale.clear();
 
-            scaleDotByOffset(page, offset);
+            if (orientation == LinearLayout.HORIZONTAL) {
+                scaleDotByOffset(page, offset);
 
-            if (page < itemCount - 1) {
-                scaleDotByOffset(page + 1, 1 - offset);
-            } else if (itemCount > 1) {
-                scaleDotByOffset(0, 1 - offset);
+                if (page < itemCount - 1) {
+                    scaleDotByOffset(page + 1, 1 - offset);
+                } else if (itemCount > 1) {
+                    scaleDotByOffset(0, 1 - offset);
+                }
+            }
+            //Vertical orientation
+            else {
+                if (itemCount - 1 == page) {
+                    scaleDotByOffset(page - 1, offset);
+                    scaleDotByOffset(page, 1 - offset);
+                } else {
+                    scaleDotByOffset(page - 1, offset);
+                }
+
+                if (page < itemCount - 1) {
+                    if (itemCount - 1 == page) {
+                        scaleDotByOffset(page + 1, 1 - offset);
+                    } else {
+                        scaleDotByOffset(page, 1 - offset);
+                    }
+                }
             }
 
             invalidate();
         }
-        adjustFramePosition(offset, page);
+        if (orientation == LinearLayout.HORIZONTAL) {
+            adjustFramePosition(offset, page);
+        } else {
+            adjustFramePosition(offset, page - 1);
+        }
         invalidate();
     }
 
@@ -645,7 +669,7 @@ public class ScrollingPagerIndicator extends View {
          * {@link ScrollingPagerIndicator#reattach()} - each time your adapter items change.
          *
          * @param indicator indicator
-         * @param pager pager to attach
+         * @param pager     pager to attach
          */
         void attachToPager(@NonNull ScrollingPagerIndicator indicator, @NonNull T pager);
 

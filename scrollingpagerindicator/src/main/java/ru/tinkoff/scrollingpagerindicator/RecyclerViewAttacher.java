@@ -31,7 +31,7 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
      * Default constructor. Use this if current page in recycler is centered.
      * All pages must have the same width.
      * Like this:
-     *
+     * <p>
      * +------------------------------+
      * |---+  +----------------+  +---|
      * |   |  |     current    |  |   |
@@ -48,15 +48,16 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
      * Use this constructor if current page in recycler isn't centered.
      * All pages must have the same width.
      * Like this:
-     *
+     * <p>
      * +-|----------------------------+
      * | +--------+  +--------+  +----|
      * | | current|  |        |  |    |
      * | |  page  |  |        |  |    |
      * | +--------+  +--------+  +----|
      * +-|----------------------------+
-     *   | currentPageOffset
-     *   |
+     * | currentPageOffset
+     * |
+     *
      * @param currentPageoffset x coordinate of current view left corner/top relative to recycler view.
      */
     public RecyclerViewAttacher(int currentPageoffset) {
@@ -164,7 +165,7 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
         if (layoutManager.getOrientation() == LinearLayoutManager.HORIZONTAL) {
             offset = (getCurrentFrameLeft() - firstView.getX()) / firstView.getMeasuredWidth();
         } else {
-            offset = (getCurrentFrameTop() - firstView.getY()) / firstView.getMeasuredHeight();
+            offset = (getCurrentFrameBottom() - firstView.getY()) / firstView.getMeasuredHeight();
         }
 
         if (offset >= 0 && offset <= 1 && position < itemCount) {
