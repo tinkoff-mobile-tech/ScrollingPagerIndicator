@@ -58,10 +58,10 @@ public class RecyclerViewAttacher implements ScrollingPagerIndicator.PagerAttach
      * | currentPageOffset
      * |
      *
-     * @param currentPageoffset x coordinate of current view left corner/top relative to recycler view.
+     * @param currentPageOffset x coordinate of current view left corner/top relative to recycler view.
      */
-    public RecyclerViewAttacher(int currentPageoffset) {
-        this.currentPageOffset = currentPageoffset;
+    public RecyclerViewAttacher(int currentPageOffset) {
+        this.currentPageOffset = currentPageOffset;
         this.centered = false;
     }
 

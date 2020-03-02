@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import androidx.annotation.ColorInt;
+import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,6 +23,9 @@ import androidx.viewpager2.widget.ViewPager2;
  * @author Nikita Olifer
  */
 public class ScrollingPagerIndicator extends View {
+
+    @IntDef({RecyclerView.HORIZONTAL, RecyclerView.VERTICAL})
+    public @interface Orientation{};
 
     private int infiniteDotCount;
 
@@ -82,7 +86,7 @@ public class ScrollingPagerIndicator extends View {
         int visibleDotCount = attributes.getInt(R.styleable.ScrollingPagerIndicator_spi_visibleDotCount, 0);
         setVisibleDotCount(visibleDotCount);
         visibleDotThreshold = attributes.getInt(R.styleable.ScrollingPagerIndicator_spi_visibleDotThreshold, 2);
-        orientation = attributes.getInt(R.styleable.ScrollingPagerIndicator_spi_orientation, 0);
+        orientation = attributes.getInt(R.styleable.ScrollingPagerIndicator_spi_orientation, RecyclerView.HORIZONTAL);
         attributes.recycle();
 
         paint = new Paint();
@@ -204,8 +208,9 @@ public class ScrollingPagerIndicator extends View {
     /**
      * The visible orientation of the dots
      *
-     * @return dot orientation
+     * @return dot orientation (RecyclerView.HORIZONTAL, RecyclerView.VERTICAL)
      */
+    @Orientation
     public int getOrientation() {
         return orientation;
     }
@@ -213,9 +218,9 @@ public class ScrollingPagerIndicator extends View {
     /**
      * Set the dot orientation
      *
-     * @param orientation dot orientation
+     * @param orientation dot orientation (RecyclerView.HORIZONTAL, RecyclerView.VERTICAL)
      */
-    public void setOrientation(int orientation) {
+    public void setOrientation(@Orientation int orientation) {
         this.orientation = orientation;
         if (attachRunnable != null) {
             reattach();
@@ -351,22 +356,9 @@ public class ScrollingPagerIndicator extends View {
                     scaleDotByOffset(0, 1 - offset);
                 }
             }
-            //Vertical orientation
-            else {
-                if (itemCount - 1 == page) {
-                    scaleDotByOffset(page - 1, offset);
-                    scaleDotByOffset(page, 1 - offset);
-                } else {
-                    scaleDotByOffset(page - 1, offset);
-                }
-
-                if (page < itemCount - 1) {
-                    if (itemCount - 1 == page) {
-                        scaleDotByOffset(page + 1, 1 - offset);
-                    } else {
-                        scaleDotByOffset(page, 1 - offset);
-                    }
-                }
+            else { // Vertical orientation
+                scaleDotByOffset(page - 1, offset);
+                scaleDotByOffset(page, 1 - offset);
             }
 
             invalidate();
