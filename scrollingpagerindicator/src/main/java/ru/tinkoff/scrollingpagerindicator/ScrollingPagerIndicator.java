@@ -444,7 +444,7 @@ public class ScrollingPagerIndicator extends View {
             } else {
                 measuredHeight = itemCount >= visibleDotCount
                         ? (int) visibleFrameWidth
-                        : (itemCount - 1) * spaceBetweenDotCenters * dotSelectedSize;
+                        : (itemCount - 1) * spaceBetweenDotCenters + dotSelectedSize;
             }
 
             int widthMode = MeasureSpec.getMode(widthMeasureSpec);
