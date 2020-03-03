@@ -10,5 +10,9 @@
         <attr name="spi_visibleDotCount" format="integer" />
         <attr name="spi_visibleDotThreshold" format="integer" />
         <attr name="spi_looped" format="boolean" />
+        <attr name="spi_orientation" format="enum">
+            <enum name="horizontal" value="0" />
+            <enum name="vertical" value="1" />
+        </attr>
     </declare-styleable>
 </resources>
