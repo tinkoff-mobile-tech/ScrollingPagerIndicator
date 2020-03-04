@@ -7,6 +7,7 @@ Pager indicator inspired by Instagram. Lightweight and easy to set up.
 Supports ViewPager, RecyclerView and attaching to custom pagers.
 
 ![preview](readmeAssets/demo.gif)
+![preview](readmeAssets/demo-horizontal.gif)
 
 ## Getting started
 Add dependency to Gradle script:
