@@ -66,7 +66,7 @@ public class ScrollingPagerIndicator extends View {
     }
 
     public ScrollingPagerIndicator(Context context, @Nullable AttributeSet attrs) {
-        this(context, attrs, 0);
+        this(context, attrs, R.attr.scrollingPagerIndicatorStyle);
     }
 
     public ScrollingPagerIndicator(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <attr name="scrollingPagerIndicatorStyle"/>
+
     <declare-styleable name="ScrollingPagerIndicator">
         <attr name="spi_dotColor" format="color" />
         <attr name="spi_dotSelectedColor" format="color" />
