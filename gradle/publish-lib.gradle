@@ -13,127 +13,88 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+apply plugin: 'maven-publish'
 
-apply plugin: 'maven'
-apply plugin: 'signing'
-
-version = VERSION_NAME
-group = GROUP
-
-def isReleaseBuild() {
-    return VERSION_NAME.contains("SNAPSHOT") == false
+def getEnvValueOrEmpty(String key) {
+    String value = System.getenv(key)
+    return value != null ? value : ""
 }
 
-def getReleaseRepositoryUrl() {
-    return hasProperty('RELEASE_REPOSITORY_URL') ? RELEASE_REPOSITORY_URL
-            : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+def getReleaseRepository() {
+    return getEnvValueOrEmpty("PRIVATE_NEXUS_RELEASE_URL")
 }
 
-def getSnapshotRepositoryUrl() {
-    return hasProperty('SNAPSHOT_REPOSITORY_URL') ? SNAPSHOT_REPOSITORY_URL
-            : "https://oss.sonatype.org/content/repositories/snapshots/"
+def getSnapshotRepository() {
+    return getEnvValueOrEmpty("PRIVATE_NEXUS_SNAPSHOT_URL")
 }
 
 def getRepositoryUsername() {
-    return hasProperty('NEXUS_USERNAME') ? NEXUS_USERNAME : ''
+    return getEnvValueOrEmpty("PRIVATE_NEXUS_USER")
 }
 
 def getRepositoryPassword() {
-    return hasProperty('NEXUS_PASSWORD') ? NEXUS_PASSWORD : ''
+    return getEnvValueOrEmpty("PRIVATE_NEXUS_PASSWORD")
 }
 
 afterEvaluate { project ->
-    uploadArchives {
-        repositories {
-            mavenDeployer {
-                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-                pom.groupId = GROUP
-                pom.artifactId = POM_ARTIFACT_ID
-                pom.version = VERSION_NAME
-
-                repository(url: getReleaseRepositoryUrl()) {
-                    authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
+    publishing {
+        publications {
+            mavenAar(MavenPublication) {
+                from components.release
+                groupId GROUP
+                version versionName
+                afterEvaluate {
+                    artifact sourcesJar
+                    artifact javadocJar
                 }
-                snapshotRepository(url: getSnapshotRepositoryUrl()) {
-                    authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
-                }
-
-                pom.project {
-                    name POM_NAME
-                    packaging POM_PACKAGING
-                    description POM_DESCRIPTION
-                    url POM_URL
-
+                pom {
+                    name = POM_NAME
+                    packaging = POM_PACKAGING
+                    description = POM_DESCRIPTION
+                    url = POM_URL
                     scm {
-                        url POM_SCM_URL
-                        connection POM_SCM_CONNECTION
-                        developerConnection POM_SCM_DEV_CONNECTION
+                        url = POM_SCM_URL
+                        connection = POM_SCM_CONNECTION
+                        developerConnection = POM_SCM_DEV_CONNECTION
                     }
-
                     licenses {
                         license {
-                            name POM_LICENCE_NAME
-                            url POM_LICENCE_URL
-                            distribution POM_LICENCE_DIST
+                            name = POM_LICENCE_NAME
+                            url = POM_LICENCE_URL
+                            distribution = POM_LICENCE_DIST
                         }
                     }
-
                     developers {
                         developer {
-                            id POM_DEVELOPER_ID
-                            name POM_DEVELOPER_NAME
+                            id = POM_DEVELOPER_ID
+                            name = POM_DEVELOPER_NAME
                         }
                     }
                 }
             }
         }
-    }
 
-    signing {
-        required { isReleaseBuild() && gradle.taskGraph.hasTask("uploadArchives") }
-        sign configurations.archives
-    }
-
-    task install(type: Upload, dependsOn: assemble) {
-        repositories.mavenInstaller {
-            configuration = configurations.archives
-
-            pom.groupId = GROUP
-            pom.artifactId = POM_ARTIFACT_ID
-            pom.version = VERSION_NAME
-
-            pom.project {
-                name POM_NAME
-                packaging POM_PACKAGING
-                description POM_DESCRIPTION
-                url POM_URL
-
-                scm {
-                    url POM_SCM_URL
-                    connection POM_SCM_CONNECTION
-                    developerConnection POM_SCM_DEV_CONNECTION
-                }
-
-                licenses {
-                    license {
-                        name POM_LICENCE_NAME
-                        url POM_LICENCE_URL
-                        distribution POM_LICENCE_DIST
-                    }
-                }
-
-                developers {
-                    developer {
-                        id POM_DEVELOPER_ID
-                        name POM_DEVELOPER_NAME
-                    }
+        repositories {
+            maven {
+                url isRelease ? getReleaseRepository() : getSnapshotRepository()
+                credentials {
+                    username = getRepositoryUsername()
+                    password = getRepositoryPassword()
                 }
             }
         }
     }
 
-    task androidJavadocs(type: Javadoc, dependsOn: preBuild) {
+    tasks.register('sourcesJar', Jar) {
+        archiveClassifier.set('sources')
+        from android.sourceSets.main.java.srcDirs
+    }
+
+    tasks.register('androidJavadocJar', Javadoc) {
+        dependsOn(preBuild)
+        if (JavaVersion.current().isJava8Compatible()) {
+            options.addStringOption('Xdoclint:none', '-quiet')
+        }
         source = android.sourceSets.main.java.source
         classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
         classpath += files(android.libraryVariants.collect { variant ->
@@ -141,27 +102,9 @@ afterEvaluate { project ->
         })
     }
 
-    task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
-        classifier = 'javadoc'
-        from androidJavadocs.destinationDir
-    }
-
-    task androidSourcesJar(type: Jar) {
-        classifier = 'sources'
-        from android.sourceSets.main.java.source
-    }
-
-    if (JavaVersion.current().isJava8Compatible()) {
-        allprojects {
-            tasks.withType(Javadoc) {
-                options.addStringOption('Xdoclint:none', '-quiet')
-            }
-        }
-    }
-
-    artifacts {
-        archives androidSourcesJar
-        archives androidJavadocsJar
-
+    tasks.register('javadocJar', Jar) {
+        dependsOn(tasks.named('androidJavadocJar'))
+        archiveClassifier.set('javadoc')
+        from "$buildDir/docs/javadoc"
     }
 }
