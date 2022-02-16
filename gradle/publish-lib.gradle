@@ -35,11 +35,11 @@ def getSnapshotRepositoryUrl() {
 }
 
 def getRepositoryUsername() {
-    return hasProperty('NEXUS_USERNAME') ? NEXUS_USERNAME : ''
+    return hasProperty('ossrhUsername') ? ossrhUsername : ''
 }
 
 def getRepositoryPassword() {
-    return hasProperty('NEXUS_PASSWORD') ? NEXUS_PASSWORD : ''
+    return hasProperty('ossrhPassword') ? ossrhPassword : ''
 }
 
 afterEvaluate { project ->
