@@ -14,35 +14,36 @@
  * limitations under the License.
  */
 apply plugin: 'maven-publish'
+apply plugin: 'signing'
 
-def getEnvValueOrEmpty(String key) {
-    String value = System.getenv(key)
-    return value != null ? value : ""
+def isAndroidLibrary = project.extensions.findByName('android') != null
+
+def getReleaseRepositoryUrl() {
+    return hasProperty('RELEASE_REPOSITORY_URL') ? RELEASE_REPOSITORY_URL
+            : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
 }
 
-def getReleaseRepository() {
-    return getEnvValueOrEmpty("PRIVATE_NEXUS_RELEASE_URL")
-}
-
-def getSnapshotRepository() {
-    return getEnvValueOrEmpty("PRIVATE_NEXUS_SNAPSHOT_URL")
+def getSnapshotRepositoryUrl() {
+    return hasProperty('SNAPSHOT_REPOSITORY_URL') ? SNAPSHOT_REPOSITORY_URL
+            : "https://oss.sonatype.org/content/repositories/snapshots/"
 }
 
 def getRepositoryUsername() {
-    return getEnvValueOrEmpty("PRIVATE_NEXUS_USER")
+    return hasProperty('ossrhUsername') ? ossrhUsername : ''
 }
 
 def getRepositoryPassword() {
-    return getEnvValueOrEmpty("PRIVATE_NEXUS_PASSWORD")
+    return hasProperty('ossrhPassword') ? ossrhPassword : ''
 }
 
-afterEvaluate { project ->
+afterEvaluate {
     publishing {
         publications {
-            mavenAar(MavenPublication) {
-                from components.release
+            release(MavenPublication) {
+                from isAndroidLibrary ? components.release : components.java
                 groupId GROUP
                 version versionName
+                artifactId POM_ARTIFACT_ID
                 afterEvaluate {
                     artifact sourcesJar
                     artifact javadocJar
@@ -73,10 +74,9 @@ afterEvaluate { project ->
                 }
             }
         }
-
         repositories {
             maven {
-                url isRelease ? getReleaseRepository() : getSnapshotRepository()
+                url isRelease ? getReleaseRepositoryUrl() : getSnapshotRepositoryUrl()
                 credentials {
                     username = getRepositoryUsername()
                     password = getRepositoryPassword()
@@ -106,5 +106,10 @@ afterEvaluate { project ->
         dependsOn(tasks.named('androidJavadocJar'))
         archiveClassifier.set('javadoc')
         from "$buildDir/docs/javadoc"
+    }
+
+    signing {
+        required { isRelease }
+        sign publishing.publications.release
     }
 }
