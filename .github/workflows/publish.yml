@@ -1,0 +1,11 @@
+name: publish
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    uses: tinkoff-mobile-tech/workflows/.github/workflows/android_lib.publish.yml@v1
+    secrets:
+      gpg_key: ${{ secrets.GPG_KEY }}
+      sign_ossrh_gradle_properties: ${{ secrets.SIGN_OSSRH_GRADLE_PROPERTIES }}
