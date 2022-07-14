@@ -17,5 +17,7 @@
             <enum name="horizontal" value="0" />
             <enum name="vertical" value="1" />
         </attr>
+        <attr name="spi_firstDotDrawable" format="reference" />
+        <attr name="spi_lastDotDrawable" format="reference" />
     </declare-styleable>
 </resources>

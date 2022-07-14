@@ -30,7 +30,9 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/pager_title"
             app:spi_dotColor="@color/dotNormal"
-            app:spi_dotSelectedColor="@color/dotHighlight" />
+            app:spi_dotSelectedColor="@color/dotHighlight"
+            app:spi_lastDotDrawable="@drawable/baseline_free_breakfast_24"
+            app:spi_firstDotDrawable="@drawable/baseline_accessibility_new_24" />
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/pager"

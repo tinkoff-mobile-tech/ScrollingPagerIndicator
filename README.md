@@ -8,6 +8,7 @@ Supports ViewPager, RecyclerView and attaching to custom pagers.
 
 ![preview](readmeAssets/demo.gif)
 ![preview](readmeAssets/demo-horizontal.gif)
+![Custom drawables](readmeAssets/custom-drawables.gif)
 
 ## Getting started
 Add dependency to Gradle script:
@@ -108,18 +109,20 @@ And then you can attach your pager like this:
 indicator.attachToPager(pager, new ViewPagerAttacher());
 ```
 ## Customization
-| Attribute| Explanation| Default Value |
-|-----------------------|-----------------------|--------|
-| spi_dotSize| The diameter of a dot.| ```6dp```|
-| spi_dotSelectedSize| The diameter of a currently selected dot.| ```10dp```|
-| spi_dotColor     | The color of a dot. | ```@android:color/darker_gray```|
-| spi_dotSelectedColor| The color of the currently selected dot.| ```@android:color/darker_gray```  |
-| spi_dotSpacing      | The distance from center to center of each dot. | ```8dp```       |
-| spi_visibleDotCount | The maximum number of dots which will be visible at the same time. If pager has more pages than visible_dot_count, indicator will scroll to show extra dots. Must be odd number.  | ```5```          |
-| spi_visibleDotThreshold | The minimum number of dots which should be visible. If pager has less pages than visibleDotThreshold, no dots will be shown.  | ```2```          |
-| spi_looped | The mode for looped pagers support. You should make indicator looped if your custom pager is looped too. If pager has less items than ```spi_visibleDotCount```, indicator will work as usual; otherwise it will always be in infinite state. | ```false```|
-| spi_dotMinimumSize | The minimum dot size for the corner dots. This size is lower or equal to ```spi_dotSize``` and greater or equal to the internal calculation for the corner dots. | Internal calculation based on ```spi_dotSize```, ```spi_dotSelectedSize``` and ```spi_dotSpacing``` |
-| spi_orientation | Visible orientation of the dots | LinearLayoutManager.HORIZONTAL |
+| Attribute               | Explanation                                                                                                                                                                                                                                   | Default Value                                                                                       |
+|-------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------|
+| spi_dotSize             | The diameter of a dot.                                                                                                                                                                                                                        | ```6dp```                                                                                           |
+| spi_dotSelectedSize     | The diameter of a currently selected dot.                                                                                                                                                                                                     | ```10dp```                                                                                          |
+| spi_dotColor            | The color of a dot.                                                                                                                                                                                                                           | ```@android:color/darker_gray```                                                                    |
+| spi_dotSelectedColor    | The color of the currently selected dot.                                                                                                                                                                                                      | ```@android:color/darker_gray```                                                                    |
+| spi_dotSpacing          | The distance from center to center of each dot.                                                                                                                                                                                               | ```8dp```                                                                                           |
+| spi_visibleDotCount     | The maximum number of dots which will be visible at the same time. If pager has more pages than visible_dot_count, indicator will scroll to show extra dots. Must be odd number.                                                              | ```5```                                                                                             |
+| spi_visibleDotThreshold | The minimum number of dots which should be visible. If pager has less pages than visibleDotThreshold, no dots will be shown.                                                                                                                  | ```2```                                                                                             |
+| spi_looped              | The mode for looped pagers support. You should make indicator looped if your custom pager is looped too. If pager has less items than ```spi_visibleDotCount```, indicator will work as usual; otherwise it will always be in infinite state. | ```false```                                                                                         |
+| spi_dotMinimumSize      | The minimum dot size for the corner dots. This size is lower or equal to ```spi_dotSize``` and greater or equal to the internal calculation for the corner dots.                                                                              | Internal calculation based on ```spi_dotSize```, ```spi_dotSelectedSize``` and ```spi_dotSpacing``` |
+| spi_orientation         | Visible orientation of the dots                                                                                                                                                                                                               | LinearLayoutManager.HORIZONTAL                                                                      |
+| spi_firstDotDrawable    | Custom drawable of the first dot, color is tinted and size is changed like standard dots. If first dot is also the last one then this value is taken into account.                                                                            | `null`                                                                                              |
+| spi_lastDotDrawable     | Custom drawable of the last dot, color is tinted and size is changed like standard dots.                                                                                                                                                 | `null`                                                                                              |
 
 ## TODO
 1. Some extreme customizations may work incorrect.
