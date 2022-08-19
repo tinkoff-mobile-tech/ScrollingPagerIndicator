@@ -1,3 +1,10 @@
+## 1.2.2
+
+#### Fixes
+- support RTL direction in horizontal mode [#29](https://github.com/Tinkoff/ScrollingPagerIndicator/issues/29)
+#### Changes
+#### Additions
+
 ## 1.2.1
 
 #### Fixes
