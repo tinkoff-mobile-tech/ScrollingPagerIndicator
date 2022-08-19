@@ -59,6 +59,7 @@ public class ScrollingPagerIndicator extends View {
 
     private Runnable attachRunnable;
     private PagerAttacher<?> currentAttacher;
+    private boolean autoRtl = true;
 
     private boolean dotCountInitialized;
 
@@ -315,6 +316,7 @@ public class ScrollingPagerIndicator extends View {
             currentAttacher.detachFromPager();
             currentAttacher = null;
             attachRunnable = null;
+            autoRtl = true;
         }
         dotCountInitialized = false;
     }
@@ -395,6 +397,17 @@ public class ScrollingPagerIndicator extends View {
         }
         adjustFramePosition(0, position);
         updateScaleInIdleState(position);
+    }
+
+    /**
+     * Sets Rtl direction availability when the view has Rtl direction.
+     * autoRtl is on by default.
+     *
+     * @param autoRtl false means rtl direction doesn't be apply even if view direction is Rtl.
+     */
+    public void setAutoRtl(boolean autoRtl) {
+        this.autoRtl = autoRtl;
+        invalidate();
     }
 
     @Override
@@ -540,7 +553,7 @@ public class ScrollingPagerIndicator extends View {
                 paint.setColor(calculateDotColor(scale));
                 if (orientation == LinearLayoutManager.HORIZONTAL) {
                     float cx = dot - visibleFramePosition;
-                    if (isRtl()) {
+                    if (autoRtl && isRtl()) {
                         cx = getWidth() - cx;
                     }
 
