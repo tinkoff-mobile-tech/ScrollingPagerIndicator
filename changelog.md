@@ -1,3 +1,6 @@
+## 1.2.3
+- updated target sdk version to 31
+
 ## 1.2.2
 
 #### Fixes
