@@ -569,10 +569,17 @@ public class ScrollingPagerIndicator extends View {
                     dotDrawable = null;
                 }
                 if (dotDrawable != null) {
-                    dotDrawable.setBounds((int) (dot - visibleFramePosition - dotSelectedSize / 2),
-                            getMeasuredHeight() / 2 - dotSelectedSize / 2,
-                            (int) (dot - visibleFramePosition + dotSelectedSize / 2),
-                            getMeasuredHeight() / 2 + dotSelectedSize / 2);
+                    if (orientation == LinearLayoutManager.HORIZONTAL) {
+                        dotDrawable.setBounds((int) (dot - visibleFramePosition - dotSelectedSize / 2),
+                                getMeasuredHeight() / 2 - dotSelectedSize / 2,
+                                (int) (dot - visibleFramePosition + dotSelectedSize / 2),
+                                getMeasuredHeight() / 2 + dotSelectedSize / 2);
+                    } else {
+                        dotDrawable.setBounds(getMeasuredWidth() / 2 - dotSelectedSize / 2,
+                                (int) (dot - visibleFramePosition - dotSelectedSize / 2),
+                                getMeasuredWidth() / 2 + dotSelectedSize / 2,
+                                (int) (dot - visibleFramePosition + dotSelectedSize / 2));
+                    }
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         dotDrawable.setTint(paint.getColor());
                     }

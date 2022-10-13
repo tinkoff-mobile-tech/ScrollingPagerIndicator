@@ -94,6 +94,20 @@
             app:spi_dotSelectedColor="@color/dotHighlight"
             app:spi_orientation="vertical" />
 
+        <ru.tinkoff.scrollingpagerindicator.ScrollingPagerIndicator
+            android:id="@+id/custom_recycler_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="32dp"
+            app:layout_constraintBottom_toBottomOf="@id/recycler"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/recycler"
+            app:spi_lastDotDrawable="@drawable/baseline_free_breakfast_24"
+            app:spi_firstDotDrawable="@drawable/baseline_accessibility_new_24"
+            app:spi_dotColor="@color/dotNormal"
+            app:spi_dotSelectedColor="@color/dotHighlight"
+            app:spi_orientation="vertical" />
+
         <TextView
             android:id="@+id/page_count_label"
             android:layout_width="100dp"

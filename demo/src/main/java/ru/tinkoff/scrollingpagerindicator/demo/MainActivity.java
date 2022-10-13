@@ -54,8 +54,10 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setPadding(screenWidth / 3, 0, screenWidth / 3, 0);
 
         ScrollingPagerIndicator recyclerIndicator = findViewById(R.id.recycler_indicator);
+        ScrollingPagerIndicator customRecyclerIndicator = findViewById(R.id.custom_recycler_indicator);
         // Consider page in the middle current
         recyclerIndicator.attachToRecyclerView(recyclerView);
+        customRecyclerIndicator.attachToRecyclerView(recyclerView);
 
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
