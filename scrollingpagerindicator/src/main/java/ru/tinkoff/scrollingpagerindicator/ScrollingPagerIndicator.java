@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.SparseArray;
@@ -26,7 +27,7 @@ import androidx.viewpager2.widget.ViewPager2;
 public class ScrollingPagerIndicator extends View {
 
     @IntDef({RecyclerView.HORIZONTAL, RecyclerView.VERTICAL})
-    public @interface Orientation{};
+    public @interface Orientation{}
 
     private int infiniteDotCount;
 
@@ -54,6 +55,12 @@ public class ScrollingPagerIndicator extends View {
 
     @ColorInt
     private int selectedDotColor;
+
+    @Nullable
+    private final Drawable firstDotDrawable;
+
+    @Nullable
+    private final Drawable lastDotDrawable;
 
     private boolean looped;
 
@@ -89,6 +96,9 @@ public class ScrollingPagerIndicator extends View {
         setVisibleDotCount(visibleDotCount);
         visibleDotThreshold = attributes.getInt(R.styleable.ScrollingPagerIndicator_spi_visibleDotThreshold, 2);
         orientation = attributes.getInt(R.styleable.ScrollingPagerIndicator_spi_orientation, RecyclerView.HORIZONTAL);
+
+        firstDotDrawable = attributes.getDrawable(R.styleable.ScrollingPagerIndicator_spi_firstDotDrawable);
+        lastDotDrawable = attributes.getDrawable(R.styleable.ScrollingPagerIndicator_spi_lastDotDrawable);
         attributes.recycle();
 
         paint = new Paint();
@@ -358,8 +368,7 @@ public class ScrollingPagerIndicator extends View {
                 } else if (itemCount > 1) {
                     scaleDotByOffset(0, 1 - offset);
                 }
-            }
-            else { // Vertical orientation
+            } else { // Vertical orientation
                 scaleDotByOffset(page - 1, offset);
                 scaleDotByOffset(page, 1 - offset);
             }
@@ -551,7 +560,31 @@ public class ScrollingPagerIndicator extends View {
                 }
 
                 paint.setColor(calculateDotColor(scale));
-                if (orientation == LinearLayoutManager.HORIZONTAL) {
+                final Drawable dotDrawable;
+                if (i == firstVisibleDotPos) {
+                    dotDrawable = firstDotDrawable;
+                } else if (i == lastVisibleDotPos) {
+                    dotDrawable = lastDotDrawable;
+                } else {
+                    dotDrawable = null;
+                }
+                if (dotDrawable != null) {
+                    if (orientation == LinearLayoutManager.HORIZONTAL) {
+                        dotDrawable.setBounds((int) (dot - visibleFramePosition - dotSelectedSize / 2),
+                                getMeasuredHeight() / 2 - dotSelectedSize / 2,
+                                (int) (dot - visibleFramePosition + dotSelectedSize / 2),
+                                getMeasuredHeight() / 2 + dotSelectedSize / 2);
+                    } else {
+                        dotDrawable.setBounds(getMeasuredWidth() / 2 - dotSelectedSize / 2,
+                                (int) (dot - visibleFramePosition - dotSelectedSize / 2),
+                                getMeasuredWidth() / 2 + dotSelectedSize / 2,
+                                (int) (dot - visibleFramePosition + dotSelectedSize / 2));
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        dotDrawable.setTint(paint.getColor());
+                    }
+                    dotDrawable.draw(canvas);
+                } else if (orientation == LinearLayoutManager.HORIZONTAL) {
                     float cx = dot - visibleFramePosition;
                     if (autoRtl && isRtl()) {
                         cx = getWidth() - cx;

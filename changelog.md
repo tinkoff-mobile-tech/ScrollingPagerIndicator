@@ -1,3 +1,6 @@
+## 1.2.4
+- Add support for custom first and last page indicators
+
 ## 1.2.3
 - updated target sdk version to 31
 
