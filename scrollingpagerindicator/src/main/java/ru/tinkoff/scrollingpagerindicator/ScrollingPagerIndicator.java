@@ -57,10 +57,10 @@ public class ScrollingPagerIndicator extends View {
     private int selectedDotColor;
 
     @Nullable
-    private final Drawable firstDotDrawable;
+    private Drawable firstDotDrawable;
 
     @Nullable
-    private final Drawable lastDotDrawable;
+    private Drawable lastDotDrawable;
 
     private boolean looped;
 
@@ -239,6 +239,24 @@ public class ScrollingPagerIndicator extends View {
         } else {
             requestLayout();
         }
+    }
+
+    /**
+     * Set custom Drawable for first dot (null for default circle)
+     * @param drawable
+     */
+    public void setFirstDotDrawable(@Nullable Drawable drawable) {
+        firstDotDrawable = drawable;
+        invalidate();
+    }
+
+    /**
+     * Set custom Drawable for last dot (null for default circle)
+     * @param drawable
+     */
+    public void setLastDotDrawable(@Nullable Drawable drawable) {
+        lastDotDrawable = drawable;
+        invalidate();
     }
 
     /**
