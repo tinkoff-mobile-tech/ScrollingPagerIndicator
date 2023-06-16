@@ -7,6 +7,8 @@ if(new File(customGradleScript).exists()){
 }
 
 android {
+    namespace "ru.tinkoff.scrollingpagerindicator"
+
     compileSdkVersion rootProject.compileSdk
 
     defaultConfig {
