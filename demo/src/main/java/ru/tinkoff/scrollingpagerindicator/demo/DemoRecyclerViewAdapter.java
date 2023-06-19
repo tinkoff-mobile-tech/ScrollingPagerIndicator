@@ -1,10 +1,12 @@
 package ru.tinkoff.scrollingpagerindicator.demo;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
@@ -20,11 +22,13 @@ public class DemoRecyclerViewAdapter extends RecyclerView.Adapter<DemoRecyclerVi
         this.itemWidth = itemWidth;
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     void setCount(int count) {
         this.count = count;
         notifyDataSetChanged();
     }
 
+    @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())

@@ -92,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private int getScreenWidth() {
-        @SuppressWarnings("ConstantConditions")
         Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         Point screenSize = new Point();
         display.getSize(screenSize);

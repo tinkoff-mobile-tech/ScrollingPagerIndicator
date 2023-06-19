@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
+    namespace "ru.tinkoff.scrollingpagerindicator.demo"
     compileSdkVersion rootProject.compileSdk
 
     defaultConfig {

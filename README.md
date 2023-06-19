@@ -30,7 +30,7 @@ implementation "androidx.recyclerview:recyclerview:x.x.x"
 ```
 2. Add view to layout:
 ```xml
-<android.support.v4.view.ViewPager
+<androidx.viewpager.widget.ViewPager
     android:id="@+id/pager"
     android:layout_width="match_parent"
     android:layout_height="wrap_content" />
@@ -52,11 +52,11 @@ indicator.attachToPager(pager);
 ## Attach to RecyclerView
 1. Ensure that you have RecyclerView in dependencies:
 ```
-implementation "com.android.support:recyclerview-v7:x.x.x"
+implementation "androidx.recyclerview:recyclerview:x.x.x"
 ```
 2. Add view to layout:
 ```xml
-<android.support.v7.widget.RecyclerView
+<androidx.recyclerview.widget.RecyclerView
     android:id="@+id/recycler"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"/>
