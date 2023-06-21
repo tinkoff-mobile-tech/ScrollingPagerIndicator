@@ -32,8 +32,8 @@ public class ScrollingPagerIndicator extends View {
     private int infiniteDotCount;
 
     private final int dotMinimumSize;
-    private final int dotNormalSize;
-    private final int dotSelectedSize;
+    private int dotNormalSize;
+    private int dotSelectedSize;
     private final int spaceBetweenDotCenters;
     private int visibleDotCount;
     private int visibleDotThreshold;
@@ -139,6 +139,43 @@ public class ScrollingPagerIndicator extends View {
     public void setDotColor(@ColorInt int color) {
         this.dotColor = color;
         invalidate();
+    }
+
+    /**
+     * @return the dot size
+     */
+
+    public int getDotSize() {
+        return dotNormalSize;
+    }
+
+    /**
+     * Sets dot size
+     *
+     * @param size dot color
+     */
+    public void setDotSize(int size) {
+        dotNormalSize = size;
+        requestLayout();
+    }
+
+    /**
+     * @return the selected dot size
+     */
+
+    public int getSelectedDotSize() {
+        return dotSelectedSize;
+    }
+
+    /**
+     * Sets selected dot size
+     *
+     * @param size selected dot color
+     */
+
+    public void setSelectedDotSize(int size) {
+        dotSelectedSize = size;
+        requestLayout();
     }
 
     /**
