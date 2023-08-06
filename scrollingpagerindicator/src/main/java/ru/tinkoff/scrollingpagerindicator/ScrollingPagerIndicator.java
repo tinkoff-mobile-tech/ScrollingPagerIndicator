@@ -62,6 +62,10 @@ public class ScrollingPagerIndicator extends View {
     @Nullable
     private final Drawable lastDotDrawable;
 
+    @Nullable
+    private final Drawable selectedDotDrawable;
+
+
     private boolean looped;
 
     private Runnable attachRunnable;
@@ -99,6 +103,7 @@ public class ScrollingPagerIndicator extends View {
 
         firstDotDrawable = attributes.getDrawable(R.styleable.ScrollingPagerIndicator_spi_firstDotDrawable);
         lastDotDrawable = attributes.getDrawable(R.styleable.ScrollingPagerIndicator_spi_lastDotDrawable);
+        selectedDotDrawable = attributes.getDrawable(R.styleable.ScrollingPagerIndicator_spi_selectedDotDrawable);
         attributes.recycle();
 
         paint = new Paint();
@@ -561,7 +566,9 @@ public class ScrollingPagerIndicator extends View {
 
                 paint.setColor(calculateDotColor(scale));
                 final Drawable dotDrawable;
-                if (i == firstVisibleDotPos) {
+                if (scale == 1f) {
+                    dotDrawable = selectedDotDrawable;
+                } else if (i == firstVisibleDotPos) {
                     dotDrawable = firstDotDrawable;
                 } else if (i == lastVisibleDotPos) {
                     dotDrawable = lastDotDrawable;
@@ -569,16 +576,18 @@ public class ScrollingPagerIndicator extends View {
                     dotDrawable = null;
                 }
                 if (dotDrawable != null) {
+                    int size = dotDrawable == selectedDotDrawable ? dotSelectedSize : dotSelectedSize / 2;
+
                     if (orientation == LinearLayoutManager.HORIZONTAL) {
-                        dotDrawable.setBounds((int) (dot - visibleFramePosition - dotSelectedSize / 2),
-                                getMeasuredHeight() / 2 - dotSelectedSize / 2,
-                                (int) (dot - visibleFramePosition + dotSelectedSize / 2),
-                                getMeasuredHeight() / 2 + dotSelectedSize / 2);
+                        dotDrawable.setBounds((int) (dot - visibleFramePosition - size),
+                                getMeasuredHeight() / 2 - size,
+                                (int) (dot - visibleFramePosition + size),
+                                getMeasuredHeight() / 2 + size);
                     } else {
-                        dotDrawable.setBounds(getMeasuredWidth() / 2 - dotSelectedSize / 2,
-                                (int) (dot - visibleFramePosition - dotSelectedSize / 2),
-                                getMeasuredWidth() / 2 + dotSelectedSize / 2,
-                                (int) (dot - visibleFramePosition + dotSelectedSize / 2));
+                        dotDrawable.setBounds(getMeasuredWidth() / 2 - size,
+                                (int) (dot - visibleFramePosition - size),
+                                getMeasuredWidth() / 2 + size,
+                                (int) (dot - visibleFramePosition + size));
                     }
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         dotDrawable.setTint(paint.getColor());

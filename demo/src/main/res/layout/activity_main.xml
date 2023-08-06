@@ -58,7 +58,8 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/pager_title2"
             app:spi_dotColor="@color/dotNormal"
-            app:spi_dotSelectedColor="@color/dotHighlight" />
+            app:spi_dotSelectedColor="@color/dotHighlight"
+            app:spi_selectedDotDrawable="@drawable/baseline_play_arrow_24"/>
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/pager2"
