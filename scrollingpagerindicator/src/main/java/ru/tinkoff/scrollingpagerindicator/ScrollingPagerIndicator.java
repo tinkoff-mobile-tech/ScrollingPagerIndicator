@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import androidx.annotation.ColorInt;
+import androidx.annotation.DrawableRes;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -63,7 +64,7 @@ public class ScrollingPagerIndicator extends View {
     private final Drawable lastDotDrawable;
 
     @Nullable
-    private final Drawable selectedDotDrawable;
+    private Drawable selectedDotDrawable;
 
 
     private boolean looped;
@@ -161,6 +162,11 @@ public class ScrollingPagerIndicator extends View {
      */
     public void setSelectedDotColor(@ColorInt int color) {
         this.selectedDotColor = color;
+        invalidate();
+    }
+
+    public void setSelectedDotDrawable(Drawable drawable) {
+        this.selectedDotDrawable = drawable;
         invalidate();
     }
 
