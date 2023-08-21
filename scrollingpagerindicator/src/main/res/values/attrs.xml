@@ -19,5 +19,6 @@
         </attr>
         <attr name="spi_firstDotDrawable" format="reference" />
         <attr name="spi_lastDotDrawable" format="reference" />
+        <attr name="spi_selectedDotDrawable" format="reference" />
     </declare-styleable>
 </resources>
