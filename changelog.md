@@ -1,3 +1,6 @@
+## 1.2.5
+- Add support for setting custom first and last page indicators programmatically
+
 ## 1.2.4
 - Add support for custom first and last page indicators
 
